@@ -1,3 +1,3 @@
 #!/usr/bin/env execlineb
 
-/usr/bin/seatd
+s6-sleep 1

@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/labwc/environment
+
+exec seatd-launch /usr/bin/labwc
