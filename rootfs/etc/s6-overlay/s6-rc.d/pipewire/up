@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/pipewire/environment
+
+exec /usr/libexec/pipewire-launcher

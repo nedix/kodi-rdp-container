@@ -1,0 +1,5 @@
+address=0.0.0.0
+enable_auth=false
+username=root
+password=secret
+use_relative_paths=true

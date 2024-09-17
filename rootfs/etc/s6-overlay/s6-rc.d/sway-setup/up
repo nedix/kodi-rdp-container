@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/sway/environment
+
+foreground { s6-sleep 1; swaymsg output * adaptive_sync on; }

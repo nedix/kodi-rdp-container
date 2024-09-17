@@ -1,0 +1,9 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/wayvnc/environment
+
+swaymsg exec WAYLAND_DISPLAY="${WAYLAND_DISPLAY}" wayvnc -- \
+    -C /etc/wayvnc/config \
+    --gpu \
+    --max-fps=120 \
+    0.0.0.0
