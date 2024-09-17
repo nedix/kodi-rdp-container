@@ -1,0 +1,18 @@
+{
+  extends: ["https://raw.githubusercontent.com/nedix/nedix/main/.github/renovate.json5"],
+  baseBranches: [
+    "main",
+    "/^release\\/.*/",
+  ],
+  customManagers: [
+    {
+      depNameTemplate: "Alpine",
+      fileMatch: ["^Dockerfile$"],
+      matchStrings: ["ARG ALPINE_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "docker",
+      packageNameTemplate: "alpine",
+    },
+  ],
+  packageRules: [
+  ],
+}
