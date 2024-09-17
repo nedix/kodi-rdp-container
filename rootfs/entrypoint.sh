@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 
-XDG_RUNTIME_DIR=$(/usr/bin/mkrundir)
-WAYLAND_DISPLAY=wayland-0
+: ${DISPLAY:=":0.0"}
+: ${XDG_RUNTIME_DIR:="$(/usr/bin/mkrundir)"}
+: ${WAYLAND_DISPLAY:="wayland-0"}
+
 eval "export $(/usr/bin/dbus-launch)"
 
 mkdir -p \
@@ -10,21 +12,6 @@ mkdir -p \
     /run/pipewire/environment \
     /run/wayvnc/environment
 
-#echo "$SWAYSOCK"        > /run/sway/environment/SWAYSOCK
-#echo "$WAYLAND_DISPLAY" > /run/sway/environment/WAYLAND_DISPLAY
-#echo "$XDG_RUNTIME_DIR" > /run/sway/environment/XDG_RUNTIME_DIR
-#echo "headless"         > /run/sway/environment/WLR_BACKENDS
-#echo 1                  > /run/sway/environment/WLR_LIBINPUT_NO_DEVICES
-#echo "$HOME"            > /run/sway/environment/HOME
-#
-#echo "$SWAYSOCK"        > /run/wayvnc/environment/SWAYSOCK
-#echo "$WAYLAND_DISPLAY" > /run/wayvnc/environment/WAYLAND_DISPLAY
-
-#echo "$DBUS_SESSION_BUS_ADDRESS"
-#echo "$DBUS_SESSION_BUS_PID"
-
-#echo "$DBUS_SESSION_BUS_ADDRESS" > /run/kodi/environment/DBUS_SESSION_BUS_ADDRESS
-#echo "$DBUS_SESSION_BUS_PID"     > /run/kodi/environment/DBUS_SESSION_BUS_PID
 echo "$SWAYSOCK"        > /run/kodi/environment/SWAYSOCK
 echo "$WAYLAND_DISPLAY" > /run/kodi/environment/WAYLAND_DISPLAY
 echo "$XDG_RUNTIME_DIR" > /run/kodi/environment/XDG_RUNTIME_DIR
