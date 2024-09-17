@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/kodi/environment
+
+exec /usr/bin/kodi-wayland --standalone

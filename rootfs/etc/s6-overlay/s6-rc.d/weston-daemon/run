@@ -1,0 +1,7 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/weston/environment
+
+exec /usr/bin/weston \
+    --backend=wayland \
+    --display="$WAYLAND_DISPLAY"

@@ -1,5 +1,0 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/kodi/environment
-
-swaymsg exec WAYLAND_DISPLAY="${WAYLAND_DISPLAY}" kodi-wayland

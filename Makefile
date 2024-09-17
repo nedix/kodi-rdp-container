@@ -9,6 +9,7 @@ up:
 		--device /dev/fuse \
         -p 127.0.0.1:$(vnc_port):5900 \
         -p 127.0.0.1:$(novnc_port):6080 \
+        -v ./storage/freerdp/certs:/var/freerdp/certs \
         kodi
 
 down:

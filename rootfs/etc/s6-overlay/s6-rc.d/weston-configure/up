@@ -1,0 +1,8 @@
+#!/usr/bin/env execlineb
+
+foreground { mkdir -p /var/freerdp/certs/ }
+
+winpr-makecert \
+    -rdp \
+    -path /var/freerdp/certs/ \
+    -n server
