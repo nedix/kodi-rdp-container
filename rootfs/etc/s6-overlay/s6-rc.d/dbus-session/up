@@ -1,0 +1,3 @@
+#!/usr/bin/env execlineb
+
+/etc/s6-overlay/s6-rc.d/dbus-session/up.sh

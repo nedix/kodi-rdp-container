@@ -1,0 +1,19 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/s6/container_environment
+
+exec env DISPLAY=:0.0 /usr/bin/Xwayland :1.0 \
+    +iglx \
+    -fullscreen \
+    -nocursor \
+    -noreset \
+    +extension COMPOSITE \
+    +extension DAMAGE \
+    +extension DOUBLE-BUFFER \
+    +extension GLX \
+    +extension RANDR \
+    +extension RENDER \
+    +extension X-Resource \
+    +extension XFIXES \
+    +extension XVideo \
+    +extension XVideo-MotionCompensation

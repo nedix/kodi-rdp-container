@@ -1,3 +1,0 @@
-#!/usr/bin/env execlineb
-
-setsid /root/.nix-profile/bin/sunshine

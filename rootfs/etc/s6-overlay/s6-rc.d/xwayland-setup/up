@@ -2,4 +2,4 @@
 
 s6-envdir /run/s6/container_environment
 
-exec /usr/bin/kodi --standalone
+xrandr --output "XWAYLAND0" --mode "1920x1080"

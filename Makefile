@@ -1,20 +1,20 @@
 setup:
 	@docker build . -t kodi --progress=plain
 
+up: rdp_port=3389
 up: vnc_port=5900
 up: novnc_port=6080
+up: xpra_port=10000
 up:
 	@docker run --rm -it --name kodi \
 		--privileged \
 		--device /dev/fuse \
-		-e DISPLAY=host.docker.internal:0 \
+		--cap-add SYS_ADMIN \
+        -p 127.0.0.1:$(rdp_port):3389 \
         -p 127.0.0.1:$(vnc_port):5900 \
         -p 127.0.0.1:$(novnc_port):6080 \
-        -p 127.0.0.1:47984-47990:47984-47990/tcp \
-        -p 127.0.0.1:48010:48010 \
-        -p 127.0.0.1:47998-48000:47998-48000/udp \
+        -p 127.0.0.1:$(xpra_port):10000 \
         -v ./storage/freerdp/certs:/var/freerdp/certs \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
         kodi
 
 down:

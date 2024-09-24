@@ -1,5 +1,0 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/labwc/environment
-
-exec /usr/bin/labwc
