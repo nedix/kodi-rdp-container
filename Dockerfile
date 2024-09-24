@@ -94,6 +94,7 @@ RUN apk add \
         seatd \
         vulkan-loader \
         weston \
+        weston-backend-drm \
         weston-backend-headless \
         weston-xwayland \
         xcb-util-keysyms \
