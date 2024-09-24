@@ -1,6 +1,7 @@
 ARG ALPINE_VERSION=3.20
 ARG ARCHITECTURE
 ARG FREERDP_VERSION=3.8.0
+ARG LIBGLVND_VERSION=1.7.0
 
 FROM alpine:${ALPINE_VERSION} AS freerdp
 
@@ -75,7 +76,29 @@ RUN export CFLAGS="$CFLAGS -D_BSD_SOURCE -flto=auto" \
     && cmake --build build \
     && DESTDIR=/build/freerdp/output/ cmake --install build
 
+FROM alpine:${ALPINE_VERSION} AS libglvnd
+
+RUN apk add \
+        gcc \
+        libx11-dev \
+        libxext-dev \
+        meson \
+        musl-dev \
+        ninja-build
+
+WORKDIR /build/libglvnd
+
+ARG LIBGLVND_VERSION
+
+RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
+    | tar -xzf - --strip-components=1 \
+    && meson build --prefix=/usr \
+    && DESTDIR=/build/libglvnd/output ninja -C build install
+
 FROM alpine:${ALPINE_VERSION}
+
+COPY --link --from=freerdp /build/freerdp/output/ /
+COPY --link --from=libglvnd /build/libglvnd/output/ /
 
 RUN apk add \
         dbus-x11 \
@@ -90,10 +113,10 @@ RUN apk add \
         libxinerama \
         libxtst \
         libxv \
-        mesa-utils \
         seatd \
         vulkan-loader \
         weston \
+        weston-backend-drm \
         weston-backend-headless \
         weston-xwayland \
         xcb-util-keysyms \
@@ -109,7 +132,7 @@ RUN apk add pulseaudio pulseaudio-utils
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && apk add \
-        "s6-overlay"
+        s6-overlay
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
     && cat /etc/apk/repositories \
@@ -120,8 +143,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
         skalibs-dev
 
 RUN rm -rf /var/cache/apk/*
-
-COPY --link --from=freerdp /build/freerdp/output/ /
 
 COPY /rootfs/ /
 
