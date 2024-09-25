@@ -1,5 +1,3 @@
 #!/usr/bin/env execlineb
 
-s6-envdir /run/s6/container_environment
-
-xrandr --output "XWAYLAND0" --mode "1920x1080"
+env DISPLAY=:1.0 xrandr --output XWAYLAND0 --mode 1920x1080

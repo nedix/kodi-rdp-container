@@ -129,6 +129,9 @@ RUN apk add pipewire pipewire-pulse pipewire-alsa wireplumber
 RUN apk add alsa-utils alsaconf
 RUN apk add pulseaudio pulseaudio-utils
 
+RUN apk add xset
+RUN apk add rtkit
+
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && apk add \

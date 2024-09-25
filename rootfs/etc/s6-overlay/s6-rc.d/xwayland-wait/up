@@ -1,3 +1,3 @@
 #!/usr/bin/env execlineb
 
-s6-sleep 10
+/etc/s6-overlay/s6-rc.d/xwayland-wait/up.sh
