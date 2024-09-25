@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
-test -d /dev/dri \
-    && sed -e "s|^backend=$|backend=drm|" -i /etc/weston/weston.ini \
-    || sed -e "s|^backend=$|backend=headless|" -i /etc/weston/weston.ini
+if ls /dev/dri/card[0-9]* &> /dev/null; then
+    sed -e "s|^backend=$|backend=drm|" -i /etc/weston/weston.ini
+else
+    sed -e "s|^backend=$|backend=headless|" -i /etc/weston/weston.ini
+fi
