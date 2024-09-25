@@ -110,13 +110,6 @@ WORKDIR /build/seatd
 
 ARG SEATD_VERSION=0.7.0
 
-#RUN meson \
-#		-Dlibseat-logind=elogind \
-#		-Dman-pages=enabled \
-#		. output
-#	meson compile -C output
-
-#RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
 RUN wget -qO- "https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VERSION}.tar.gz" \
     | tar -xzf - --strip-components=1
 
