@@ -2,6 +2,7 @@ ARG ALPINE_VERSION=3.20
 ARG ARCHITECTURE
 ARG FREERDP_VERSION=3.8.0
 ARG LIBGLVND_VERSION=1.7.0
+ARG SEATD_VERSION=0.8.0
 
 FROM alpine:${ALPINE_VERSION} AS freerdp
 
@@ -102,18 +103,16 @@ RUN apk add \
         meson \
         scdoc \
         elogind-dev \
-        linux-headers
-
-RUN apk add samurai
+        linux-headers \
+        samurai
 
 WORKDIR /build/seatd
 
-ARG SEATD_VERSION=0.7.0
+ARG SEATD_VERSION
 
 RUN wget -qO- "https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1
-
-RUN meson setup build \
+    | tar -xzf - --strip-components=1 \
+    && meson setup build \
         --prefix=/usr \
         -Dlibseat-logind=elogind \
         -Dlibseat-builtin=enabled \
