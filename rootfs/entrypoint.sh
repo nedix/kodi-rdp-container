@@ -9,5 +9,7 @@ exec env -i \
     WAYLAND_DISPLAY="wayland-1" \
     XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
     XDG_SESSION_TYPE="wayland" \
+    LIBGL_ALWAYS_INDIRECT="1" \
+    GALLIUM_DRIVER="llvmpipe" \
     _XWAYLAND_GLOBAL_OUTPUT_SCALE="2" \
     /init
