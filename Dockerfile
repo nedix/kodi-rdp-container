@@ -95,6 +95,37 @@ RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" 
     && meson build --prefix=/usr \
     && DESTDIR=/build/libglvnd/output ninja -C build install
 
+FROM alpine:${ALPINE_VERSION} AS seatd
+
+RUN apk add \
+        g++ \
+        meson \
+        scdoc \
+        elogind-dev \
+        linux-headers
+
+RUN apk add samurai
+
+WORKDIR /build/seatd
+
+ARG SEATD_VERSION=0.7.0
+
+#RUN meson \
+#		-Dlibseat-logind=elogind \
+#		-Dman-pages=enabled \
+#		. output
+#	meson compile -C output
+
+#RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
+RUN wget -qO- "https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VERSION}.tar.gz" \
+    | tar -xzf - --strip-components=1
+
+RUN meson setup build \
+        --prefix=/usr \
+        -Dlibseat-logind=elogind \
+        -Dlibseat-builtin=enabled \
+    && DESTDIR=/build/seatd/output ninja -C build install
+
 FROM alpine:${ALPINE_VERSION}
 
 COPY --link --from=freerdp /build/freerdp/output/ /
@@ -131,6 +162,8 @@ RUN apk add pulseaudio pulseaudio-utils
 
 RUN apk add xset
 RUN apk add rtkit
+RUN apk add elogind
+RUN apk add polkit-elogind
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -146,6 +179,8 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
         skalibs-dev
 
 RUN rm -rf /var/cache/apk/*
+
+COPY --link --from=seatd /build/seatd/output/ /
 
 COPY /rootfs/ /
 

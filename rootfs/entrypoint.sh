@@ -12,4 +12,6 @@ exec env -i \
     LIBGL_ALWAYS_INDIRECT="1" \
     GALLIUM_DRIVER="llvmpipe" \
     _XWAYLAND_GLOBAL_OUTPUT_SCALE="2" \
+    LIBSEAT_BACKEND="builtin" \
+    SEATD_VTBOUND="0" \
     /init
