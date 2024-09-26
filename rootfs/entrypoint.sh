@@ -1,12 +1,13 @@
 #!/usr/bin/env sh
 
+: ${GALLIUM_DRIVER:="llvmpipe"}
 : ${WESTON_BACKEND}
 
 adduser root audio
 
 exec env -i \
     DISPLAY=":1.0" \
-    GALLIUM_DRIVER="llvmpipe" \
+    GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     HOME="/root" \
     LIBGL_ALWAYS_INDIRECT="1" \
     LIBSEAT_BACKEND="builtin" \
