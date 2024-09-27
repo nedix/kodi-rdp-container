@@ -1,0 +1,3 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/s6/container_environment env -u WAYLAND_DISPLAY /usr/sbin/xrdp --nodaemon

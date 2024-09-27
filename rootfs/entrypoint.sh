@@ -4,6 +4,7 @@
 : ${WESTON_BACKEND}
 
 adduser root audio
+echo "secret" | passwd -s root
 
 exec env -i \
     DISPLAY=":1.0" \

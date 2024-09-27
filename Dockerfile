@@ -156,6 +156,7 @@ RUN apk add xset
 RUN apk add rtkit
 RUN apk add elogind
 RUN apk add polkit-elogind
+RUN apk add xauth xorg-server xrdp xorgxrdp
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \

@@ -2,7 +2,7 @@
 
 s6-envdir /run/s6/container_environment
 
-exec env DISPLAY=:0.0 /usr/bin/Xwayland :1.0 \
+exec env DISPLAY=:1.0 /usr/bin/Xwayland :2.0 \
     +iglx \
     -fullscreen \
     -nocursor \

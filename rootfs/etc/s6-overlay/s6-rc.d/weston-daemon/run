@@ -2,4 +2,4 @@
 
 s6-envdir /run/s6/container_environment
 
-exec env DISPLAY=:0.0 /usr/bin/weston --config=/etc/weston/weston.ini
+exec env DISPLAY=:1.0 /usr/bin/weston --config=/etc/weston/weston.ini
