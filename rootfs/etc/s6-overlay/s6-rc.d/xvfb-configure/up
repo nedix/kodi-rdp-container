@@ -1,5 +1,0 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/s6/container_environment
-
-ln -s /etc/X11/xrdp/xorg.conf /etc/X11/Xvfb
