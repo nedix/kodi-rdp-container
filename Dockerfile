@@ -3,79 +3,7 @@ ARG ARCHITECTURE
 ARG FREERDP_VERSION=3.8.0
 ARG LIBGLVND_VERSION=1.7.0
 ARG SEATD_VERSION=0.8.0
-
-FROM alpine:${ALPINE_VERSION} AS freerdp
-
-RUN apk add \
-        alsa-lib-dev \
-        bsd-compat-headers \
-        cmake \
-        cups-dev \
-        fuse3-dev \
-        g++ \
-        gsm-dev \
-        gst-plugins-base-dev \
-        icu-dev \
-        krb5-dev \
-        libjpeg-turbo-dev \
-        libusb-dev \
-        libxcursor-dev \
-        libxdamage-dev \
-        libxi-dev \
-        libxinerama-dev \
-        libxkbcommon-dev \
-        libxkbfile-dev \
-        libxv-dev \
-        linux-headers \
-        openssl-dev \
-        samurai \
-        sdl2-dev \
-        sdl2_ttf-dev \
-        wayland-dev \
-        webkit2gtk-4.1-dev
-
-RUN apk add pulseaudio-dev
-
-WORKDIR /build/freerdp
-
-ARG FREERDP_VERSION
-
-RUN wget -qO- "https://github.com/FreeRDP/FreeRDP/tarball/${FREERDP_VERSION}" \
-    | tar -xzf - --strip-components=1
-
-RUN export CFLAGS="$CFLAGS -D_BSD_SOURCE -flto=auto" \
-    && cmake -B build -G Ninja \
-        -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_INSTALL_LIBDIR=lib \
-        -DBUILTIN_CHANNELS=OFF \
-        -DWITH_ALSA=ON \
-        -DWITH_CHANNELS=ON \
-        -DWITH_CUPS=ON \
-        -DWITH_DIRECTFB=OFF \
-        -DWITH_FFMPEG=OFF \
-        -DWITH_GSM=ON \
-        -DWITH_GSTREAMER_1_0=ON \
-        -DWITH_IPP=OFF \
-        -DWITH_JPEG=ON \
-        -DWITH_NEON=OFF \
-        -DWITH_OPENSSL=ON \
-        -DWITH_PCSC=OFF \
-        -DWITH_PULSE=ON \
-        -DWITH_SERVER=ON \
-        -DWITH_SWSCALE=OFF \
-        -DWITH_WAYLAND=ON \
-        -DWITH_X11=ON \
-        -DWITH_XCURSOR=OFF \
-        -DWITH_XEXT=ON \
-        -DWITH_XI=ON \
-        -DWITH_XINERAMA=ON \
-        -DWITH_XKBFILE=ON \
-        -DWITH_XRENDER=ON \
-        -DWITH_XV=ON \
-        -DWITH_ZLIB=ON \
-    && cmake --build build \
-    && DESTDIR=/build/freerdp/output/ cmake --install build
+ARG XORGXRDP_VERSION=0.9.19
 
 FROM alpine:${ALPINE_VERSION} AS libglvnd
 
@@ -118,9 +46,46 @@ RUN wget -qO- "https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VERSION}.t
         -Dlibseat-builtin=enabled \
     && DESTDIR=/build/seatd/output ninja -C build install
 
+FROM alpine:${ALPINE_VERSION} AS xorgxrdp
+
+RUN apk add \
+        autoconf \
+        automake \
+        g++ \
+        libdrm-dev \
+        libepoxy-dev \
+        libtool \
+        make \
+        mesa-dev \
+        nasm \
+        pkgconf \
+        xorg-server-dev \
+        xrdp-dev
+
+WORKDIR /build/xorgxrdp
+
+ARG XORGXRDP_VERSION
+
+RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
+    | tar -xzf - --strip-components=1 \
+    && export CFLAGS="$(pkg-config --cflags libdrm)" \
+    && ./bootstrap \
+    && ./configure \
+        --enable-glamor \
+        --libdir=/usr/lib/xorg/modules \
+        --localstatedir=/var \
+        --mandir=/usr/share/man \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+    && make \
+    && make DESTDIR=/build/xorgxrdp/output install
+
+RUN sed -E \
+        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
+        -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
+
 FROM alpine:${ALPINE_VERSION}
 
-COPY --link --from=freerdp /build/freerdp/output/ /
 COPY --link --from=libglvnd /build/libglvnd/output/ /
 
 RUN apk add \
@@ -156,7 +121,7 @@ RUN apk add xset
 RUN apk add rtkit
 RUN apk add elogind
 RUN apk add polkit-elogind
-RUN apk add xauth xorg-server xrdp xorgxrdp
+RUN apk add xauth xorg-server xrdp
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -174,6 +139,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
 RUN rm -rf /var/cache/apk/*
 
 COPY --link --from=seatd /build/seatd/output/ /
+COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 
 COPY /rootfs/ /
 

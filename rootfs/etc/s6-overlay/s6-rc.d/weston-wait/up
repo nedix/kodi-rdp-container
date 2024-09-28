@@ -1,5 +1,0 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/s6/container_environment
-
-/etc/s6-overlay/s6-rc.d/weston-wait/up.sh

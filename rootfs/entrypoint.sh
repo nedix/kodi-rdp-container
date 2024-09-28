@@ -8,16 +8,12 @@ adduser root audio
 echo "secret" | passwd -s root
 
 exec env -i \
-    DISPLAY=":1.0" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     HOME="/root" \
     LIBGL_ALWAYS_INDIRECT="1" \
     LIBSEAT_BACKEND="builtin" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
-    WAYLAND_DISPLAY="wayland-1" \
-    WESTON_BACKEND="$WESTON_BACKEND" \
-    WESTON_RENDERER="$WESTON_RENDERER" \
     XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
-    XDG_SESSION_TYPE="wayland" \
+    XDG_SESSION_TYPE="x11" \
     /init
