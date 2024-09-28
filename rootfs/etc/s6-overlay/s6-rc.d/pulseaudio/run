@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+s6-envdir /run/s6/container_environment
+
+exec /usr/bin/pulseaudio --system --disallow-exit --disable-shm --exit-idle-time=-1

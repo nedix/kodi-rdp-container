@@ -2,7 +2,14 @@
 
 : ${GALLIUM_DRIVER:="llvmpipe"}
 
-adduser root audio
+adduser -H -D -s /sbin/nologin pulse
+addgroup pulse
+addgroup pulse-access
+addgroup pulse audio
+addgroup pulse pulse
+addgroup pulse pulse-access
+addgroup root pulse-access
+
 echo "secret" | passwd -s root
 
 exec env -i \
