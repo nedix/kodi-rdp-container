@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
 : ${GALLIUM_DRIVER:="llvmpipe"}
-: ${WESTON_BACKEND}
+: ${WESTON_BACKEND:="headless"}
+: ${WESTON_RENDERER:="pixman"}
 
 adduser root audio
 echo "secret" | passwd -s root
@@ -16,6 +17,7 @@ exec env -i \
     SEATD_VTBOUND="0" \
     WAYLAND_DISPLAY="wayland-1" \
     WESTON_BACKEND="$WESTON_BACKEND" \
+    WESTON_RENDERER="$WESTON_RENDERER" \
     XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
     XDG_SESSION_TYPE="wayland" \
     /init
