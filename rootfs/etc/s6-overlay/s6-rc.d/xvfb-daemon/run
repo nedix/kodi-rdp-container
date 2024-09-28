@@ -5,7 +5,6 @@ s6-envdir /run/s6/container_environment
 exec env -u DISPLAY /usr/bin/Xvfb :0.0 \
     -nocursor \
     -noreset \
-    -screen 0 640x480x24+32 \
     +extension COMPOSITE \
     +extension DAMAGE \
     +extension DOUBLE-BUFFER \

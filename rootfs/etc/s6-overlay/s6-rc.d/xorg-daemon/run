@@ -1,5 +1,0 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/s6/container_environment
-
-exec env DISPLAY=:0.0 /usr/bin/Xorg :1.0 -config /etc/X11/xrdp/xorg.conf

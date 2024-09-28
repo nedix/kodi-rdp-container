@@ -1,3 +1,0 @@
-#!/usr/bin/env execlineb
-
-env DISPLAY=:0.0 xrandr --output screen --mode 640x480

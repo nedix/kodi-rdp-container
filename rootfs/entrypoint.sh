@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
 : ${GALLIUM_DRIVER:="llvmpipe"}
-: ${WESTON_BACKEND:="headless"}
-: ${WESTON_RENDERER:="pixman"}
 
 adduser root audio
 echo "secret" | passwd -s root
@@ -10,7 +8,7 @@ echo "secret" | passwd -s root
 exec env -i \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     HOME="/root" \
-    LIBGL_ALWAYS_INDIRECT="1" \
+    LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
