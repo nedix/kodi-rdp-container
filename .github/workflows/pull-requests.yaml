@@ -28,7 +28,7 @@ jobs:
         run: |
           set -e
           docker buildx build -t test --cache-from=type=gha --cache-to=type=gha .
-          ./tests/e2e/index.sh
+          ./tests/index.sh
 
   merge:
     name: Merge
