@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-adduser -H -D -s /sbin/nologin pulse
+adduser -D -h /var/run/pulse -s /sbin/nologin pulse
 addgroup pulse-access
 addgroup pulse audio
 addgroup pulse pulse

@@ -242,6 +242,7 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
 FROM alpine:${ALPINE_VERSION}
 
 RUN apk add \
+        colord \
         dbus-x11 \
         fdk-aac \
         fuse \
@@ -265,23 +266,21 @@ RUN apk add \
         libxtst \
         libxv \
         llvm17-libs \
+        mesa-dri-gallium \
+        mesa-egl \
+        mesa-gl \
+        mesa-va-gallium \
+        mesa-vdpau-gallium \
         opus \
-        pipewire \
-        pipewire-pulse \
         pixman \
         vulkan-loader \
-        wireplumber \
         xauth \
+        xcalib \
         xcb-util-keysyms \
         xkbcomp \
         xkeyboard-config \
         xrandr \
         xset
-
-# TODO
-RUN apk add rtkit elogind polkit-elogind linux-pam
-RUN apk add xcalib colord
-RUN apk add xvfb mesa-dri-gallium mesa-va-gallium mesa-vdpau-gallium mesa-gl mesa-egl
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
