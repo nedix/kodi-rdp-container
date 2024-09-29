@@ -1,6 +1,7 @@
 ARG ALPINE_VERSION=3.20
 ARG ARCHITECTURE
 ARG FREERDP_VERSION=3.8.0
+ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.7
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
@@ -246,6 +247,13 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
     && make DESTDIR=/build/pulseaudio-module-xrdp/output install
 
 FROM alpine:${ALPINE_VERSION}
+
+ARG GLIBC_VERSION
+
+RUN wget -q https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -O /etc/apk/keys/sgerrand.rsa.pub \
+    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
+    && apk add "glibc-${GLIBC_VERSION}.apk" \
+    && rm "glibc-${GLIBC_VERSION}.apk"
 
 RUN apk add \
         colord \
