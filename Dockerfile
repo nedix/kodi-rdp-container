@@ -289,6 +289,8 @@ RUN apk add \
         xset
 
 RUN apk add libelogind linux-pam
+RUN apk add xf86-video-nouveau xf86-video-nv
+RUN apk add xf86-video-amdgpu xf86-video-ati
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
