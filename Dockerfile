@@ -285,6 +285,7 @@ RUN apk add \
         mesa-gl \
         mesa-va-gallium \
         mesa-vdpau-gallium \
+        openssl \
         opus \
         pixman \
         vulkan-loader \

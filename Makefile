@@ -5,7 +5,7 @@ up: rdp_port=3389
 up:
 	@docker run --rm -it --name kodi \
         -p 127.0.0.1:$(rdp_port):3389 \
-        -v ./storage/freerdp/certs:/var/freerdp/certs \
+        -v ./storage/xrdp/certs:/var/xrdp/certs \
         kodi
 
 down:
