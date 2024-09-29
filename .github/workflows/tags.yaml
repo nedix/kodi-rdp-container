@@ -78,16 +78,12 @@ jobs:
           echo "DIGEST=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
           echo "REF_NAME=$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Pull latest image
-        run: |
-          docker pull --platform linux/amd64 ${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }}
-          docker pull --platform linux/arm64 ${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }}
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64/v8
+          cache-from: ${{ format('type=registry,ref=ghcr.io/{0}', github.repository) }}
           push: true
           tags: |
             ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }}
