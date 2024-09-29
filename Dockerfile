@@ -168,7 +168,6 @@ RUN git init "$PWD" \
         --enable-pam \
         --enable-pixman \
         --enable-rfxcodec \
-        --enable-tests \
         --enable-tjpeg \
         --enable-vsock \
     && make -j $(( $(nproc) + 1 )) \
