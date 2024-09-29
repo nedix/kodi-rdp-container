@@ -150,7 +150,7 @@ RUN git init "$PWD" \
     && git checkout "tags/v${XRDP_VERSION}" \
     && git submodule update --init --recursive \
     && sed -E \
-        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 15|" \
+        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xrdp/xrdp/xrdp_mm.c \
     && export CFLAGS="-O2 -g1 -Wno-error=cpp" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
@@ -185,8 +185,7 @@ ARG XORGXRDP_VERSION
 RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
     | tar -xzf - --strip-components=1 \
     && sed -E \
-        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 15|" \
-        -e "s|#define MIN_MS_TO_WAIT_FOR_MORE_UPDATES 4|#define MIN_MS_TO_WAIT_FOR_MORE_UPDATES 0|" \
+        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xorgxrdp/module/rdpClientCon.c \
     && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
