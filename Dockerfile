@@ -265,6 +265,7 @@ RUN apk add \
         lame-libs \
         libcrypto3 \
         libdrm \
+        libelogind \
         libepoxy \
         libssl3 \
         libturbojpeg \
@@ -279,6 +280,7 @@ RUN apk add \
         libxrandr \
         libxtst \
         libxv \
+        linux-pam \
         llvm17-libs \
         mesa-dri-gallium \
         mesa-egl \
@@ -297,10 +299,14 @@ RUN apk add \
         xrandr \
         xset
 
-RUN apk add libelogind linux-pam
-RUN apk add xf86-video-nouveau xf86-video-nv
-RUN apk add xf86-video-amdgpu xf86-video-ati
-RUN apk add xf86-video-fbdev
+RUN apk add \
+        x264-libs \
+        x265-libs \
+        xf86-video-amdgpu \
+        xf86-video-ati \
+        xf86-video-fbdev \
+        xf86-video-nouveau \
+        xf86-video-nv
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
