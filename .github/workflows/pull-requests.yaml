@@ -18,7 +18,7 @@ jobs:
         run: echo "ref=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.0
         with:
           ref: ${{ steps.extract-ref.outputs.ref }}
           fetch-depth: 0
@@ -27,8 +27,8 @@ jobs:
         shell: sh
         run: |
           set -e
-          docker build . -t test
-          ./tests/e2e/index.sh
+          docker buildx build -t test --cache-from=type=gha --cache-to=type=gha .
+          ./tests/index.sh
 
   merge:
     name: Merge
@@ -41,7 +41,7 @@ jobs:
         run: echo "ref=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
 
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.0
         with:
           ref: ${{ steps.extract-ref.outputs.ref }}
           fetch-depth: 0
@@ -68,7 +68,7 @@ jobs:
         run: echo "ref=${{ github.event.repository.default_branch }}" >> $GITHUB_OUTPUT
 
       - name: Checkout code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.0
         with:
           ref: ${{ steps.extract-ref.outputs.ref }}
           fetch-depth: 0
