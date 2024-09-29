@@ -15,7 +15,6 @@ echo "root:secret" | chpasswd
 exec env -i \
     HOME="/root" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}" \
-    LIBGL_ALWAYS_INDIRECT="1" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER" \
