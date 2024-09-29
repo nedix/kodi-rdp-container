@@ -2,6 +2,7 @@
 
 set -x
 
+export LIBGL_ALWAYS_INDIRECT=1
 export LIBGL_DEBUG=verbose
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
