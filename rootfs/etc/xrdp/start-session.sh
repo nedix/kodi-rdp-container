@@ -3,6 +3,7 @@
 set -x
 
 export LIBGL_DEBUG=verbose
+export LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
