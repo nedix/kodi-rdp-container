@@ -149,6 +149,7 @@ RUN git init "$PWD" \
     && git remote add -f origin -t \* https://github.com/neutrinolabs/xrdp.git \
     && git checkout "tags/v${XRDP_VERSION}" \
     && git submodule update --init --recursive \
+    && sed -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 15|" -i /build/xrdp/xrdp/xrdp_mm.c \
     && export CFLAGS="-O2 -g1 -Wno-error=cpp" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
