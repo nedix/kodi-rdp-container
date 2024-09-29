@@ -83,8 +83,8 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64/v8
-          cache-from: ${{ format('type=registry,ref=ghcr.io/{0}', github.repository) }}
-          cache-to: ${{ format('type=registry,ref=ghcr.io/{0}', github.repository) }}
+          cache-from: type=gha
+          cache-to: type=gha
           push: true
           tags: |
             ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }}
