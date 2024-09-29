@@ -149,6 +149,9 @@ RUN git init "$PWD" \
     && git remote add -f origin -t \* https://github.com/neutrinolabs/xrdp.git \
     && git checkout "tags/v${XRDP_VERSION}" \
     && git submodule update --init --recursive \
+    && sed -E \
+        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
+        -i /build/xrdp/xrdp/xrdp_mm.c \
     && export CFLAGS="-O2 -g1 -Wno-error=cpp" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
@@ -181,6 +184,9 @@ ARG XORGXRDP_VERSION
 
 RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
     | tar -xzf - --strip-components=1 \
+    && sed -E \
+        -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
+        -i /build/xorgxrdp/module/rdpClientCon.c \
     && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
