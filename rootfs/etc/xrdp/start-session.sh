@@ -20,3 +20,4 @@ ls -hal /dev/dri
 /usr/bin/kodi -fs --standalone
 
 cat /home/kodi/.kodi/temp/kodi.log
+cat /home/kodi/.xorgxrdp.1.log
