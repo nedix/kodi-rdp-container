@@ -78,6 +78,15 @@ RUN apk add \
         xorgproto \
         xtrans
 
+# libglvnd
+RUN apk add \
+        gcc \
+        libx11-dev \
+        libxext-dev \
+        meson \
+        musl-dev \
+        samurai
+
 FROM build-base AS seatd
 
 WORKDIR /build/seatd
