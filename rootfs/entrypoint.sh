@@ -17,7 +17,6 @@ addgroup kodi pulse-access
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 
-
 exec env -i \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     HOME="/root" \
