@@ -361,6 +361,8 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
         mkrundir \
         skalibs-dev
 
+RUN apk add mesa-utils
+
 RUN rm -rf /var/cache/apk/*
 
 COPY --link --from=seatd /build/seatd/output/ /

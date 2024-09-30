@@ -7,6 +7,10 @@ export GLAMOR_DEBUG="true"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
+/usr/bin/eglinfo -B
+
+/usr/bin/glxinfo -B
+
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 /usr/bin/kodi
