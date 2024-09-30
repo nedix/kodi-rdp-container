@@ -7,10 +7,6 @@ export GLAMOR_DEBUG="true"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
-/usr/bin/pulseaudio --disallow-exit --disable-shm --exit-idle-time=-1 &
-
-sleep 1
-
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 /usr/bin/kodi
