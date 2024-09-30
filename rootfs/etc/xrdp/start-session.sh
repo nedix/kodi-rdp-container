@@ -4,6 +4,8 @@ set -x
 
 export LIBGL_DEBUG="verbose"
 export GLAMOR_DEBUG="true"
+export GALLIUM_DRIVER="nvidia"
+export __GLX_VENDOR_LIBRARY_NAME="nvidia"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
@@ -15,6 +17,6 @@ sleep 1
 
 ls -hal /dev/dri
 
-/usr/bin/vglrun -d "$DISPLAY" -ge /usr/bin/kodi --standalone
+/usr/bin/kodi --standalone
 
 cat /home/kodi/.kodi/temp/kodi.log
