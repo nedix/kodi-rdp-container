@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
-: ${GALLIUM_DRIVER:="zink"}
+: ${GALLIUM_DRIVER}
 : ${LIBVA_DRIVER_NAME}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
+: ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${PASSWORD_HASH}
-: ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
+: ${__GLX_VENDOR_LIBRARY_NAME}
 
 addgroup pulse-access
 
