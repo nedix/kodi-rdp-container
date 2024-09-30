@@ -5,14 +5,17 @@
 : ${MESA_DRIVER:="zink"}
 : ${PASSWORD_HASH}
 
+adduser -D -h /home/kodi -s /sbin/nologin -u 1000 kodi
 adduser -D -h /var/run/pulse -s /sbin/nologin pulse
+
 addgroup pulse-access
 addgroup pulse audio
 addgroup pulse pulse
 addgroup pulse pulse-access
-addgroup root pulse-access
+addgroup kodi pulse-access
 
-echo "root:secret" | chpasswd
+echo "kodi:${PASSWORD_HASH}" | chpasswd -e
+
 
 exec env -i \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-export HOME=/root
+export HOME=/home/kodi
 
 touch ~/.Xauthority
 
