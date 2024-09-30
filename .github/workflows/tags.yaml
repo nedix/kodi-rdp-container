@@ -95,7 +95,7 @@ jobs:
       - name: Build image
         run: |
           buildctl build \
-            --frontend dockerfile.v0 \
+            --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
             --opt platform=linux/amd64 \
             --output type=image,name=${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }},push=true \
             --export-cache type=gha \
