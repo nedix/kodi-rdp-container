@@ -82,16 +82,21 @@ WORKDIR /build/glibc
 
 ARG GLIBC_VERSION
 
-RUN wget -qO /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-dev-${GLIBC_VERSION}.apk" \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
-    && apk add \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-dev-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk"
+RUN mkdir -p /build/glibc/output/etc/apk/keys/ \
+    && wget -q -O /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && cp /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub /etc/apk/keys/ \
+    && ( \
+        cd output \
+        && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
+        && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
+        && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-dev-${GLIBC_VERSION}.apk" \
+        && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
+        && apk add \
+            "glibc-${GLIBC_VERSION}.apk" \
+            "glibc-bin-${GLIBC_VERSION}.apk" \
+            "glibc-dev-${GLIBC_VERSION}.apk" \
+            "glibc-i18n-${GLIBC_VERSION}.apk" \
+    )
 
 FROM build-base AS seatd
 
@@ -261,17 +266,6 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
 
 FROM alpine:${ALPINE_VERSION}
 
-ARG GLIBC_VERSION
-
-RUN wget -qO /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
-    && apk add \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk"
-
 RUN apk add \
         colord \
         dbus-x11 \
@@ -348,6 +342,18 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --link --from=build-base /build/glibc/output/ /
+
+ARG GLIBC_VERSION
+
+RUN apk add \
+        "glibc-${GLIBC_VERSION}.apk" \
+        "glibc-bin-${GLIBC_VERSION}.apk" \
+        "glibc-i18n-${GLIBC_VERSION}.apk" \
+    && rm \
+        "glibc-${GLIBC_VERSION}.apk" \
+        "glibc-bin-${GLIBC_VERSION}.apk" \
+        "glibc-i18n-${GLIBC_VERSION}.apk"
 
 COPY /rootfs/ /
 
