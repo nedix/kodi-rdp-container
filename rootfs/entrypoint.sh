@@ -20,7 +20,8 @@ echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 
 exec env -i \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
-    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}" \
+    GLAMOR_DEBUG="true" \
+    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/glibc-compat/lib" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \
