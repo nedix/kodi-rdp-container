@@ -15,6 +15,6 @@ sleep 1
 
 ls -hal /dev/dri
 
-/usr/bin/kodi --standalone
+/usr/bin/vglrun -d "$DISPLAY" -ge /usr/bin/kodi --standalone
 
 cat /home/kodi/.kodi/temp/kodi.log

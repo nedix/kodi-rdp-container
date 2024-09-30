@@ -6,6 +6,7 @@ ARG MESA_VERSION=24.1.7
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
+ARG VIRTUALGL_VERSION=3.1.1
 ARG XORGXRDP_VERSION=0.10.2
 ARG XORG_SERVER_VERSION=21.1.13
 ARG XRDP_VERSION=0.10.1
@@ -253,6 +254,36 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR=/build/pulseaudio-module-xrdp/output install
 
+FROM build-base AS virtualgl
+
+RUN apk add \
+        cmake \
+        g++ \
+        glu-dev \
+        libjpeg-turbo-dev \
+        libx11-dev \
+        libxcb-dev \
+        libxext-dev \
+        libxtst-dev \
+        libxv-dev \
+        lld \
+        make \
+        xcb-util-keysyms-dev
+
+WORKDIR /build/virtualgl
+
+ARG VIRTUALGL_VERSION
+
+RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION} \
+    | tar -xzf - --strip-components=1 \
+    && cmake \
+        -B build \
+        -G"Unix Makefiles" \
+        -DVGL_FAKEOPENCL="OFF" \
+        -DCMAKE_C_FLAGS="-fuse-ld=lld" \
+        -DCMAKE_CXX_FLAGS="-fuse-ld=lld" \
+    && (cd build && make)
+
 FROM alpine:${ALPINE_VERSION}
 
 ARG GLIBC_VERSION
@@ -338,6 +369,8 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
+COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
 
 COPY /rootfs/ /
 
