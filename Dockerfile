@@ -282,7 +282,7 @@ RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION
         -DVGL_FAKEOPENCL="OFF" \
         -DCMAKE_C_FLAGS="-fuse-ld=lld" \
         -DCMAKE_CXX_FLAGS="-fuse-ld=lld" \
-    && (cd build && make)
+    && (cd build && make -j $(( $(nproc) + 1 )))
 
 FROM alpine:${ALPINE_VERSION}
 
