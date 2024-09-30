@@ -68,12 +68,6 @@ jobs:
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Setup Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          install: true
-          platforms: linux/amd64
-
       - name: Login to container registry
         uses: docker/login-action@v3
         with:
@@ -83,15 +77,8 @@ jobs:
 
       - name: Build image
         run: |
-          docker buildx build \
-            --cache-from=type=gha \
-            --cache-to=type=gha \
-            --output=type=oci,dest= \
-            -t ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }} \
-            -t ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.REF_NAME) }} \
-            -t ${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }} \
-            .
-
-      - name: Push image to container registry
-        run: |
-          docker image push --all-tags ${{ format('ghcr.io/{0}', github.repository) }}
+          buildctl build \
+            --opt platform=linux/amd64 \
+            --output type=image,name=${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }},push=true \
+            --export-cache=type=gha \
+            --import-cache=type=gha
