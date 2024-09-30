@@ -85,7 +85,7 @@ RUN apk add \
         libxext-dev \
         meson \
         musl-dev \
-        samurai \
+        samurai
 
 FROM build-base AS seatd
 
