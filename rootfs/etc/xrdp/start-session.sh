@@ -2,8 +2,6 @@
 
 set -x
 
-env
-
 export GALLIUM_DRIVER="$(cat /run/s6/container_environment/GALLIUM_DRIVER)"
 export GLAMOR_DEBUG="true"
 export LIBGL_DEBUG="verbose"
