@@ -2,6 +2,7 @@
 
 set -x
 
+export EGL_PLATFORM="$(cat /run/s6/container_environment/EGL_PLATFORM)"
 export GALLIUM_DRIVER="$(cat /run/s6/container_environment/GALLIUM_DRIVER)"
 export GLAMOR_DEBUG="true"
 export LIBGL_DEBUG="verbose"
@@ -16,6 +17,8 @@ export __GLX_VENDOR_LIBRARY_NAME="$(cat /run/s6/container_environment/__GLX_VEND
 /usr/bin/eglinfo -B
 
 /usr/bin/glxinfo -B
+
+/usr/bin/vainfo --display drm --device "/dev/dri/$(ls /dev/dri | grep -E "renderD[0-9]+" | head -n 1)"
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 

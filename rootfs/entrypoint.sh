@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 : ${GALLIUM_DRIVER}
+: ${EGL_PLATFORM:="surfaceless"}
 : ${LIBVA_DRIVER_NAME}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
 : ${PASSWORD_HASH}
@@ -19,6 +20,7 @@ addgroup pulse pulse-access
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 
 exec env -i \
+    EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="true" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/glibc-compat/lib" \
