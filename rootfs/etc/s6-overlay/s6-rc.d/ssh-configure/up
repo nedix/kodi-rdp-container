@@ -1,0 +1,3 @@
+#!/usr/bin/env execlineb
+
+ssh-keygen -A
