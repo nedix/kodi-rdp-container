@@ -93,7 +93,7 @@ WORKDIR /build/seatd
 
 ARG SEATD_VERSION
 
-RUN wget -qO- "https://git.sr.ht/~kennylevinsen/seatd/archive/${SEATD_VERSION}.tar.gz" \
+RUN wget -qO- "https://github.com/kennylevinsen/seatd/tarball/${SEATD_VERSION}" \
     | tar -xzf - --strip-components=1 \
     && export CFLAGS="-O2 -g1 -Wno-error=unused-parameter" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
