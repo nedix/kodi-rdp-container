@@ -18,3 +18,5 @@ sleep 1
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 exec /usr/bin/kodi --standalone
+
+cat /home/kodi/.kodi/temp/kodi.log
