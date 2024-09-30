@@ -344,7 +344,7 @@ COPY --link --from=build-base /build/glibc/output/ /
 
 ARG GLIBC_VERSION
 
-RUN apk add \
+RUN apk add --force-overwrite \
         "glibc-${GLIBC_VERSION}.apk" \
         "glibc-bin-${GLIBC_VERSION}.apk" \
         "glibc-i18n-${GLIBC_VERSION}.apk" \
