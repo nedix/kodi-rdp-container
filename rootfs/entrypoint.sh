@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
 
 : ${GALLIUM_DRIVER:="zink"}
-: ${LIBVA_DRIVER}
-: ${MESA_DRIVER:="zink"}
+: ${LIBVA_DRIVER_NAME}
+: ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
 : ${PASSWORD_HASH}
+: ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
 adduser -D -h /home/kodi -s /sbin/nologin -u 1000 kodi
 adduser -D -h /var/run/pulse -s /sbin/nologin pulse
@@ -23,11 +24,11 @@ exec env -i \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
-    LIBVA_DRIVER_NAME="$LIBVA_DRIVER" \
-    MESA_LOADER_DRIVER_OVERRIDE="$MESA_DRIVER" \
+    LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \
+    MESA_LOADER_DRIVER_OVERRIDE="$MESA_LOADER_DRIVER_OVERRIDE" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
     XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
-    __GLX_VENDOR_LIBRARY_NAME="mesa" \
+    __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     /init
