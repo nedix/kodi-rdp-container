@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+: ${GALLIUM_DRIVER}
 : ${LIBVA_DRIVER}
 : ${MESA_DRIVER}
 
@@ -13,6 +14,7 @@ addgroup root pulse-access
 echo "root:secret" | chpasswd
 
 exec env -i \
+    GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     HOME="/root" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}" \
     LIBGL_DEBUG="verbose" \
