@@ -1,0 +1,5 @@
+#!/usr/bin/env execlineb
+
+foreground { /usr/bin/ssh-keygen -A }
+
+foreground { echo "PermitRootLogin yes" >> /etc/ssh/sshd_config }

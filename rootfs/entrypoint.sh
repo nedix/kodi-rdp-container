@@ -9,7 +9,7 @@
 
 addgroup pulse-access
 
-adduser -D -h /home/kodi -s /sbin/nologin kodi
+adduser -D -h /home/kodi -s /bin/sh kodi
 adduser -D -h /var/run/pulse -s /sbin/nologin pulse
 
 addgroup kodi pulse-access
@@ -18,6 +18,7 @@ addgroup pulse pulse
 addgroup pulse pulse-access
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
+echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \

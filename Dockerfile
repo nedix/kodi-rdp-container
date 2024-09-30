@@ -347,6 +347,8 @@ RUN apk add \
         xf86-video-nv
 
 RUN apk add musl-dev
+RUN apk add mesa-utils
+RUN apk add openssh sudo
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -360,8 +362,6 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
         kodi-x11 \
         mkrundir \
         skalibs-dev
-
-RUN apk add mesa-utils
 
 RUN rm -rf /var/cache/apk/*
 
@@ -377,6 +377,9 @@ COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/vi
 COPY /rootfs/ /
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+# SSH
+EXPOSE 22
 
 # RDP
 EXPOSE 3389
