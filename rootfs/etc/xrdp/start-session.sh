@@ -4,8 +4,6 @@ set -x
 
 export LIBGL_DEBUG="verbose"
 export GLAMOR_DEBUG="true"
-export GALLIUM_DRIVER="nouveau"
-export __GLX_VENDOR_LIBRARY_NAME="nouveau"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
