@@ -6,14 +6,15 @@
 : ${PASSWORD_HASH}
 : ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
-adduser -D -h /home/kodi -s /sbin/nologin -u 1000 kodi
+addgroup pulse-access
+
+adduser -D -h /home/kodi -s /sbin/nologin kodi
 adduser -D -h /var/run/pulse -s /sbin/nologin pulse
 
-addgroup pulse-access
+addgroup kodi pulse-access
 addgroup pulse audio
 addgroup pulse pulse
 addgroup pulse pulse-access
-addgroup kodi pulse-access
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 

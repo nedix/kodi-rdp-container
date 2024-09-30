@@ -270,6 +270,8 @@ RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" 
 
 FROM alpine:${ALPINE_VERSION}
 
+COPY --link --from=libglvnd /build/libglvnd/output/ /
+
 ARG GLIBC_VERSION
 
 RUN wget -q https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -O /etc/apk/keys/sgerrand.rsa.pub \
@@ -351,7 +353,6 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
-COPY --link --from=libglvnd /build/libglvnd/output/ /
 
 COPY /rootfs/ /
 
