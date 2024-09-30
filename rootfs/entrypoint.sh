@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
 
-: ${GALLIUM_DRIVER}
+: ${GALLIUM_DRIVER:="zink"}
 : ${LIBVA_DRIVER}
-: ${MESA_DRIVER}
+: ${MESA_DRIVER:="zink"}
+: ${PASSWORD_HASH}
 
 adduser -D -h /var/run/pulse -s /sbin/nologin pulse
 addgroup pulse-access
@@ -25,4 +26,5 @@ exec env -i \
     SEATD_VTBOUND="0" \
     XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
+    __GLX_VENDOR_LIBRARY_NAME="mesa" \
     /init
