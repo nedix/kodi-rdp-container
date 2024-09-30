@@ -91,7 +91,7 @@ RUN mkdir -p /build/glibc/output/etc/apk/keys/ \
         && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
         && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-dev-${GLIBC_VERSION}.apk" \
         && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
-        && apk add \
+        && apk add --force-overwrite \
             "glibc-${GLIBC_VERSION}.apk" \
             "glibc-bin-${GLIBC_VERSION}.apk" \
             "glibc-dev-${GLIBC_VERSION}.apk" \
