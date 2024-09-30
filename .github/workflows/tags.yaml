@@ -100,5 +100,5 @@ jobs:
             --output type=image,name=${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }},push=true \
             --output type=image,name=${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.REF_NAME) }},push=true \
             --output type=image,name=${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }},push=true \
-            --export-cache type=gha \
+            --export-cache type=gha,mode=max \
             --import-cache type=gha
