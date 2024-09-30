@@ -78,15 +78,6 @@ RUN apk add \
         xorgproto \
         xtrans
 
-# libglvnd
-RUN apk add \
-        gcc \
-        libx11-dev \
-        libxext-dev \
-        meson \
-        musl-dev \
-        samurai
-
 FROM build-base AS seatd
 
 WORKDIR /build/seatd
@@ -253,24 +244,7 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR=/build/pulseaudio-module-xrdp/output install
 
-FROM build-base AS libglvnd
-
-WORKDIR /build/libglvnd
-
-ARG LIBGLVND_VERSION
-
-RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
-    | tar -xzf - --strip-components=1 \
-    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
-    && meson build \
-        --prefix=/usr \
-        -Db_lto=true \
-        -Db_ndebug=true \
-    && DESTDIR=/build/libglvnd/output ninja -C build install
-
 FROM alpine:${ALPINE_VERSION}
-
-COPY --link --from=libglvnd /build/libglvnd/output/ /
 
 ARG GLIBC_VERSION
 
