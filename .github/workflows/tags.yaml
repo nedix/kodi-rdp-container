@@ -59,6 +59,12 @@ jobs:
           ref: ${{ steps.extract-ref.outputs.ref }}
           fetch-depth: 0
 
+      - name: Prepare tags
+        id: tags
+        run: |
+          echo "DIGEST=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
+          echo "REF_NAME=$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
+
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -66,6 +72,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           install: true
+          platforms: linux/amd64
 
       - name: Login to container registry
         uses: docker/login-action@v3
@@ -74,21 +81,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare tags
-        id: tags
-        run: |
-          echo "DIGEST=$(git rev-parse --short=7 HEAD)" >> $GITHUB_OUTPUT
-          echo "REF_NAME=$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
-
       - name: Build image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64/v8
-          cache-from: type=gha
-          cache-to: type=gha
-          load: true
-          tags: |
-            ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }}
-            ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.REF_NAME) }}
-            ${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }}
+        run: |
+          docker buildx build \
+            --cache-from=type=gha \
+            --cache-to=type=gha \
+            --output=type=oci,dest= \
+            -t ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.DIGEST) }} \
+            -t ${{ format('ghcr.io/{0}:{1}', github.repository, steps.tags.outputs.REF_NAME) }} \
+            -t ${{ format('ghcr.io/{0}:{1}', github.repository, 'latest') }} \
+            .
+
+      - name: Push image to container registry
+        run: |
+          docker image push --all-tags ${{ format('ghcr.io/{0}', github.repository) }}
