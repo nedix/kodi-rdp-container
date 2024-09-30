@@ -334,8 +334,6 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
         mkrundir \
         skalibs-dev
 
-RUN rm -rf /var/cache/apk/*
-
 COPY --link --from=seatd /build/seatd/output/ /
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -354,6 +352,8 @@ RUN apk add \
         "glibc-${GLIBC_VERSION}.apk" \
         "glibc-bin-${GLIBC_VERSION}.apk" \
         "glibc-i18n-${GLIBC_VERSION}.apk"
+
+RUN rm -rf /var/cache/apk/*
 
 COPY /rootfs/ /
 
