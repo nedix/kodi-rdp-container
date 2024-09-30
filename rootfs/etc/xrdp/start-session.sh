@@ -4,8 +4,8 @@ set -x
 
 export LIBGL_DEBUG="verbose"
 export GLAMOR_DEBUG="true"
-export GALLIUM_DRIVER="nvidia"
-export __GLX_VENDOR_LIBRARY_NAME="nvidia"
+export GALLIUM_DRIVER="nouveau"
+export __GLX_VENDOR_LIBRARY_NAME="nouveau"
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
@@ -14,8 +14,6 @@ export __GLX_VENDOR_LIBRARY_NAME="nvidia"
 sleep 1
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
-
-ls -hal /dev/dri
 
 /usr/bin/kodi
 
