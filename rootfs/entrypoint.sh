@@ -1,9 +1,10 @@
 #!/usr/bin/env sh
 
+: ${EGL_PLATFORM:="drm"}
 : ${GALLIUM_DRIVER}
-: ${EGL_PLATFORM:="surfaceless"}
 : ${LIBVA_DRIVER_NAME}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
+: ${NOUVEAU_USE_ZINK:="1"}
 : ${PASSWORD_HASH}
 : ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
