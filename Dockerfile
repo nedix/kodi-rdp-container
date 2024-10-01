@@ -458,6 +458,7 @@ ARG GLIBMUS_VERSION=1cd8a307652e90729a8d08ed4b0a38c05bb99500
 RUN mkdir -p \
         gcompat \
         output/lib/ \
+        output/lib64/ \
     && case "$BUILDARCH" in \
         aarch64) \
             CFLAGS="-march=armv8-a"; \
@@ -509,18 +510,19 @@ RUN mkdir -p \
             WITH_LIBUCONTEXT=1 \
             WITH_OBSTACK="musl-obstack" \
     ) \
+    && install -Dm755 "$LOADER_NAME" -t /build/glibmus/output/lib64/ \
     && install -Dm755 GLIBCFAKE.so.0 -t /build/glibmus/output/lib/ \
-    && install -Dm755 "$LOADER_NAME" -t /build/glibmus/output/lib/ \
     && ( \
-        cd ./output/lib \
+        cd ./output \
+        && ln -sf "../lib64/${LOADER_NAME}" "./lib/${LOADER_NAME}" \
         && for LINK in \
-            libc.so.6 \
-            libcrypt.so.1 \
-            libm.so.6 \
-            libpthread.so.0 \
-            libresolv.so.2 \
-            librt.so.1 \
-            libutil.so.1 \
+            ./lib/libc.so.6 \
+            ./lib/libcrypt.so.1 \
+            ./lib/libm.so.6 \
+            ./lib/libpthread.so.0 \
+            ./lib/libresolv.so.2 \
+            ./lib/librt.so.1 \
+            ./lib/libutil.so.1 \
         ; do \
             ln -s GLIBCFAKE.so.0 "$LINK" \
         ; done \
@@ -577,7 +579,6 @@ RUN apk add \
         xf86-video-nv
 
 RUN apk add openssh sudo
-RUN apk add libc6-compat
 RUN apk add vulkan-tools
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
