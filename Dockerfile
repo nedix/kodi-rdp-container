@@ -201,7 +201,7 @@ RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERS
     && make DESTDIR=/build/xorgxrdp/output install \
     && sed -E \
         -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
-        -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm vc4 v3d\"|" \
+        -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
@@ -300,6 +300,8 @@ RUN apk add \
         ply \
         pyaml \
         pycparser
+
+RUN apk add cbindgen
 
 WORKDIR /build/mesa
 
