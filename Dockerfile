@@ -448,11 +448,16 @@ RUN apk add \
 
 RUN apk add \
         x264-libs \
-        x265-libs
+        x265-libs \
+        xf86-video-amdgpu \
+        xf86-video-ati \
+        xf86-video-fbdev \
+        xf86-video-nouveau \
+        xf86-video-nv
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
-RUN apk add mesa-dri-gallium mesa-va-gallium
+RUN apk add mesa-dri-gallium mesa-va-gallium mesa-utils
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
