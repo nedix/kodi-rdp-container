@@ -457,7 +457,7 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
-RUN apk add mesa-dri-gallium mesa-va-gallium mesa-utils
+RUN apk add mesa-utils
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
