@@ -317,11 +317,11 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Degl=enabled \
         -Dgallium-drivers=swrast,v3d,vc4,zink \
         -Dgallium-extra-hud=true \
-        -Dgallium-nine=true \
+        -Dgallium-nine=false \
         -Dgallium-rusticl=true \
         -Dgallium-va=disabled \
         -Dgallium-vdpau=disabled \
-        -Dgallium-xa=enabled \
+        -Dgallium-xa=disabled \
         -Dgbm=enabled \
         -Dgles1=enabled \
         -Dgles2=enabled \
