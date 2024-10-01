@@ -260,6 +260,87 @@ RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" 
         -Db_ndebug=true \
     && DESTDIR=/build/libglvnd/output ninja -C build install
 
+FROM build-base AS mesa
+
+COPY --link --from=libglvnd /build/libglvnd/output/ /
+
+RUN apk add \
+        bison \
+        clang17-dev \
+        cmake \
+        flex-dev \
+        g++ \
+        glslang-dev \
+        libclc-dev \
+        libdrm-dev \
+        libelf \
+        libva-dev \
+        libvdpau-dev \
+        libx11-dev \
+        libxcb-dev \
+        libxext-dev \
+        libxfixes-dev \
+        libxrandr-dev \
+        libxshmfence-dev \
+        libxxf86vm-dev \
+        llvm17-dev \
+        mesa-egl \
+        meson \
+        musl-dev \
+        pkgconf \
+        py3-pip \
+        python3 \
+        rust-bindgen \
+        rustfmt \
+        samurai \
+        spirv-llvm-translator-dev \
+        vulkan-loader-dev \
+        wayland-dev \
+        wayland-protocols \
+    && pip install --break-system-packages \
+        mako \
+        ply \
+        pyaml \
+        pycparser
+
+WORKDIR /build/mesa
+
+ARG MESA_VERSION
+
+RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VERSION}/mesa-mesa-${MESA_VERSION}.tar.gz" \
+    | tar -xzf - --strip-components=1 \
+    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+    && meson setup build \
+        --prefix=/usr \
+        -Db_lto=true \
+        -Db_ndebug=true \
+        -Dbackend_max_links=2 \
+        -Ddri-drivers-path=/usr/lib/xorg/modules/dri \
+        -Degl=enabled \
+        -Dgallium-drivers=nouveau,swrast,tegra,v3d,vc4,zink \
+        -Dgallium-extra-hud=true \
+        -Dgallium-nine=true \
+        -Dgallium-rusticl=true \
+        -Dgallium-va=enabled \
+        -Dgallium-vdpau=enabled \
+        -Dgallium-xa=enabled \
+        -Dgbm=enabled \
+        -Dgles1=enabled \
+        -Dgles2=enabled \
+        -Dglvnd=enabled \
+        -Dglx=dri \
+        -Dllvm=enabled \
+        -Dopengl=true \
+        -Dosmesa=true \
+        -Dplatforms=x11 \
+        -Drust_std=2021 \
+        -Dshared-glapi=enabled \
+        -Dshared-llvm=enabled \
+        -Dvideo-codecs=all \
+        -Dvulkan-drivers=amd,swrast,intel,broadcom \
+        -Dvulkan-layers=device-select,overlay \
+    && DESTDIR=/build/mesa/output ninja -C build install
+
 FROM alpine:${ALPINE_VERSION} AS nvidia
 
 RUN apk add \
@@ -391,7 +472,6 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
-RUN apk add mesa-gl mesa-egl
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -412,6 +492,7 @@ COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
 COPY --link --from=libglvnd /build/libglvnd/output/ /
+COPY --link --from=mesa /build/mesa/output/ /
 COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
 COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
