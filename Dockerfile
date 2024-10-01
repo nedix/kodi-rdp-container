@@ -1,6 +1,6 @@
 ARG ALPINE_VERSION=3.20
-ARG ARCHITECTURE
-ARG GLIBC_VERSION=2.35-r1
+ARG GCOMPAT_VERSION=9a75570c55def665acb935d8ca903bbca65b82d2
+ARG GLIBMUS_VERSION=1cd8a307652e90729a8d08ed4b0a38c05bb99500
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.4
 ARG NVIDIA_VERSION=560.35.03
@@ -87,7 +87,7 @@ WORKDIR /build/seatd
 ARG SEATD_VERSION
 
 RUN wget -qO- "https://github.com/kennylevinsen/seatd/tarball/${SEATD_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1 -Wno-error=unused-parameter" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
@@ -104,7 +104,7 @@ WORKDIR /build/xorg-server
 ARG XORG_SERVER_VERSION
 
 RUN wget -qO- "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server-${XORG_SERVER_VERSION}/xserver-xorg-server-${XORG_SERVER_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
@@ -184,7 +184,7 @@ WORKDIR /build/xorgxrdp
 ARG XORGXRDP_VERSION
 
 RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xorgxrdp/module/rdpClientCon.c \
@@ -211,7 +211,7 @@ WORKDIR /build/pulseaudio
 ARG PULSEAUDIO_VERSION
 
 RUN wget -qO- "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-${PULSEAUDIO_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && sed -E \
         -e "s|libintl_dep = .*|libintl_dep = cc.find_library('intl')|" \
         -i meson.build \
@@ -233,7 +233,7 @@ WORKDIR /build/pulseaudio-module-xrdp
 ARG PULSEAUDIO_MODULE_XRDP_VERSION
 
 RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v${PULSEAUDIO_MODULE_XRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
@@ -253,7 +253,7 @@ WORKDIR /build/libglvnd
 ARG LIBGLVND_VERSION
 
 RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson build \
         --prefix=/usr \
@@ -349,10 +349,9 @@ RUN apk add \
 
 WORKDIR /build/nvidia
 
-ARG ARCHITECTURE
 ARG NVIDIA_VERSION
 
-RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
+RUN case $(uname -m) in \
         aarch64) NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
         amd64)   NVIDIA_ARCHITECTURE="Linux-x86_64"; ;; \
         arm64)   NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
@@ -418,7 +417,7 @@ WORKDIR /build/virtualgl
 ARG VIRTUALGL_VERSION
 
 RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION} \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && cmake \
         -B build \
         -G"Unix Makefiles" \
@@ -432,6 +431,97 @@ RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION
         && make -j $(( $(nproc) + 1 )) \
         && make DESTDIR=/build/virtualgl/output install \
     )
+
+FROM alpine:${ALPINE_VERSION} AS glibmus
+
+RUN apk add \
+        clang \
+        gcompat \
+        libucontext \
+        libucontext-dev \
+        make \
+        musl-dev \
+        musl-obstack \
+        musl-obstack-dev \
+        patch \
+        pkgconf
+
+COPY --link /src/glibmus/ /build/glibmus/
+
+WORKDIR /build/glibmus
+
+ARG ALPINE_VERSION
+ARG BUILDARCH
+ARG GCOMPAT_VERSION=9a75570c55def665acb935d8ca903bbca65b82d2
+ARG GLIBMUS_VERSION=1cd8a307652e90729a8d08ed4b0a38c05bb99500
+
+RUN mkdir -p \
+        gcompat \
+        output/lib/ \
+    && case "$BUILDARCH" in \
+        aarch64) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; amd64) \
+            CFLAGS="-march=x86-64"; \
+            LINKER_PATH="/lib/ld-musl-x86_64.so.1" \
+            LOADER_NAME="ld-linux-x86-64.so.2" \
+        ;; arm64) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; armv8b) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; armv8l) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; x86_64) \
+            CFLAGS="-march=x86-64"; \
+            LINKER_PATH="/lib/ld-musl-x86_64.so.1" \
+            LOADER_NAME="ld-linux-x86-64.so.2" \
+        ;; *) echo "Unsupported architecture, exiting..."; exit 1; ;; \
+    esac \
+    && wget -qO- "https://gitlab.com/manoel-linux1/GlibMus-HQ/-/archive/${GLIBMUS_VERSION}/GlibMus-HQ-${GLIBMUS_VERSION}.tar.gz" \
+    | tar -xzf- --strip-components=1 \
+    && wget -qO- "https://git.adelielinux.org/adelie/gcompat/-/archive/${GCOMPAT_VERSION}/gcompat-${GCOMPAT_VERSION}.tar.gz" \
+    | tar -xzf- --strip-components=1 -C gcompat \
+    && patch -Np1 -i fenv.cpp.patch \
+    && export CFLAGS="-O3 -pipe ${CFLAGS}" \
+    && export CXXFLAGS="$CFLAGS" \
+    && export LDFLAGS="-Wl,--as-needed -Wl,-O3 ${CFLAGS}" \
+    && make -j $(( $(nproc) + 1 )) \
+        LINKER_PATH="$LINKER_PATH" \
+        LOADER_NAME="$LOADER_NAME" \
+        WITH_LIBUCONTEXT=1 \
+        WITH_OBSTACK="musl-obstack" \
+    && ( \
+        cd gcompat \
+        && cp -r ../patch/* . \
+        && patch -Np1 -i Makefile.patch \
+        && patch -Np1 -i loader.patch \
+        && make -j $(( $(nproc) + 1 )) \
+            LINKER_PATH="$LINKER_PATH" \
+            LOADER_NAME="$LOADER_NAME" \
+            WITH_LIBUCONTEXT=1 \
+            WITH_OBSTACK="musl-obstack" \
+    ) \
+    && install -Dm755 GLIBCFAKE.so.0 -t /build/glibmus/output/lib/ \
+    && install -Dm755 "$LOADER_NAME" -t /build/glibmus/output/lib/ \
+    && for LINK in \
+        libc.so.6 \
+        libcrypt.so.1 \
+        libm.so.6 \
+        libpthread.so.0 \
+        libresolv.so.2 \
+        librt.so.1 \
+        libutil.so.1 \
+    ; do \
+        ln -s /build/glibmus/output/lib/GLIBCFAKE.so.0 "/build/glibmus/output/lib/${LINK}" \
+    ; done
 
 FROM alpine:${ALPINE_VERSION}
 
@@ -499,21 +589,6 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
         mkrundir \
         skalibs-dev
 
-ARG GLIBC_VERSION
-
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
-    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
-    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
-    && apk add --force-overwrite \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk" \
-    && rm \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk"
-
 RUN rm -rf /var/cache/apk/*
 
 COPY --link --from=seatd /build/seatd/output/ /
@@ -526,6 +601,7 @@ COPY --link --from=libglvnd /build/libglvnd/output/ /
 COPY --link --from=mesa /build/mesa/output/ /
 #COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/output/ /
+COPY --link --from=glibmus /build/glibmus/output/ /
 
 COPY /rootfs/ /
 

@@ -19,6 +19,8 @@ set -x
 
 /usr/bin/glxinfo -B
 
+vulkaninfo --summary
+
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 /usr/bin/kodi
