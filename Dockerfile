@@ -266,16 +266,37 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
     && wget -q "https://download.nvidia.com/XFree86/${NVIDIA_ARCHITECTURE}/${NVIDIA_VERSION}/NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
     && chmod +x "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
     && "./NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" --extract-only \
-    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
-    && mkdir -p \
-        /build/nvidia/output/etc/ld.so.conf.d \
-        /build/nvidia/output/etc/vulkan/icd.d \
-        /build/nvidia/output/lib/nvidia \
-    && find "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \( -name "*.so" -o -name "*.so.*" \) -exec mv {} /build/nvidia/output/lib/nvidia \; \
-    && echo "/lib/nvidia" > /build/nvidia/output/etc/ld.so.conf.d/nvidia.conf \
-    && ( \
+    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run"
+
+RUN ( \
         cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
-        && cp 10_nvidia.json 10_nvidia_wayland.json 15_nvidia_gbm.json 20_nvidia_xcb.json 20_nvidia_xlib.json /build/nvidia/output/etc/vulkan/icd.d/ \
+        && install -Dm644 "10_nvidia.json"                           -t "/build/nvidia/output/usr/share/glvnd/egl_vendor.d" \
+        && install -Dm644 "20_nvidia_xcb.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
+        && install -Dm644 "20_nvidia_xlib.json"                      -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
+        && install -Dm644 "nvidia_icd.json"                          -t "/build/nvidia/output/usr/share/vulkan/icd.d" \
+        && install -Dm644 "nvidia_layers.json"                       -t "/build/nvidia/output/usr/share/vulkan/implicit_layer.d" \
+        && install -Dm755 "libEGL_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv1_CM_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv2_nvidia.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLX_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libglxserver_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib/nvidia/xorg" \
+        && install -Dm755 "libnvidia-allocator.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-api.so.1"                       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-cfg.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xcb.so.1"                   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xlib.so.1"                  -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-eglcore.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-encode.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-fbc.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glcore.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glsi.so.${NVIDIA_VERSION}"      -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glvkspirv.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-gpucomp.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-ml.so.${NVIDIA_VERSION}"        -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libvdpau_nvidia.so.${NVIDIA_VERSION}"     -t "/build/nvidia/output/usr/lib/vdpau" \
+        && install -Dm755 "nvidia_drv.so"                            -t "/build/nvidia/output/usr/lib/xorg/modules/drivers" \
+        && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so.1" \
+        && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so" \
     )
 
 FROM alpine:${ALPINE_VERSION}
