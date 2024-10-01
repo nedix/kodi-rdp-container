@@ -275,7 +275,6 @@ RUN apk add \
         libdrm-dev \
         libelf \
         libva-dev \
-        libvdpau-dev \
         libx11-dev \
         libxcb-dev \
         libxext-dev \
@@ -322,7 +321,7 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dgallium-nine=true \
         -Dgallium-rusticl=true \
         -Dgallium-va=enabled \
-        -Dgallium-vdpau=enabled \
+        -Dgallium-vdpau=disabled \
         -Dgallium-xa=enabled \
         -Dgbm=enabled \
         -Dgles1=enabled \
