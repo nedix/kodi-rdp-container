@@ -3,7 +3,7 @@ ARG ARCHITECTURE
 ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.7
-ARG NVIDIA_VERSION=535.86.05
+ARG NVIDIA_VERSION=535.183.01
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
@@ -366,8 +366,7 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
     && ( \
         cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
         && install -Dm644 "10_nvidia.json"                           -t "/build/nvidia/output/usr/share/glvnd/egl_vendor.d" \
-        && install -Dm644 "20_nvidia_xcb.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
-        && install -Dm644 "20_nvidia_xlib.json"                      -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
+        && install -Dm644 "15_nvidia_gbm.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
         && install -Dm644 "nvidia_icd.json"                          -t "/build/nvidia/output/usr/share/vulkan/icd.d" \
         && install -Dm644 "nvidia_layers.json"                       -t "/build/nvidia/output/usr/share/vulkan/implicit_layer.d" \
         && install -Dm755 "libEGL_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
