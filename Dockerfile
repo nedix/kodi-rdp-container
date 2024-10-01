@@ -3,7 +3,7 @@ ARG ARCHITECTURE
 ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.7
-ARG NVIDIA_VERSION=560.35.03
+ARG NVIDIA_VERSION=535.86.05
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
@@ -486,9 +486,7 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
 
 ARG GLIBC_VERSION
 
-RUN mkdir -p /build/glibc/output/etc/apk/keys/ \
-    && wget -q -O /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-    && cp /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub /etc/apk/keys/ \
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
     && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
     && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
     && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
