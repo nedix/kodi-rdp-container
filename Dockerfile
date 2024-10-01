@@ -301,15 +301,15 @@ RUN apk add \
         pyaml \
         pycparser
 
-RUN apk add cbindgen
+RUN apk add cbindgen xz
 
 WORKDIR /build/mesa
 
 ARG MESA_VERSION
 
-RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VERSION}/mesa-mesa-${MESA_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
-    && export MESA_GIT_SHA1_OVERRIDE=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF \
+RUN wget -qO- "https://archive.mesa3d.org/mesa-${MESA_VERSION}.tar.xz" \
+    | tar -xzJf - --strip-components=1 \
+    && echo '#define MESA_GIT_SHA1 ""' > git_sha1.h \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
