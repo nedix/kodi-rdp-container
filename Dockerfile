@@ -3,6 +3,7 @@ ARG ARCHITECTURE
 ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.7
+ARG NVIDIA_VERSION=560.35.03
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
@@ -96,7 +97,8 @@ RUN mkdir -p /build/glibc/output/etc/apk/keys/ \
             "glibc-bin-${GLIBC_VERSION}.apk" \
             "glibc-dev-${GLIBC_VERSION}.apk" \
             "glibc-i18n-${GLIBC_VERSION}.apk" \
-    )
+    ) \
+    && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
 
 FROM build-base AS seatd
 
@@ -264,6 +266,35 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR=/build/pulseaudio-module-xrdp/output install
 
+FROM alpine:${ALPINE_VERSION} AS nvidia
+
+RUN apk add \
+        zstd
+
+WORKDIR /build/nvidia
+
+ARG ARCHITECTURE
+ARG NVIDIA_VERSION
+
+RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
+        aarch64) NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        amd64)   NVIDIA_ARCHITECTURE="Linux-x86_64"; ;; \
+        arm64)   NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        armv8b)  NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        armv8l)  NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        x86_64)  NVIDIA_ARCHITECTURE="Linux-x86_64"; ;; \
+        *) echo "Unsupported architecture, exiting..."; exit 1; ;; \
+    esac \
+    && wget -q "https://download.nvidia.com/XFree86/${NVIDIA_ARCHITECTURE}/${NVIDIA_VERSION}/NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && chmod +x "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && "./NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" --extract-only \
+    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && mkdir -p \
+        /build/nvidia/output/etc/ld.so.conf.d \
+        /build/nvidia/output/lib/nvidia \
+    && find "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \( -name "*.so" -o -name "*.so.*" \) -exec mv {} /build/nvidia/output/lib/nvidia \; \
+    && echo "/lib/nvidia" > /build/nvidia/output/etc/ld.so.conf.d/nvidia.conf
+
 FROM alpine:${ALPINE_VERSION}
 
 RUN apk add \
@@ -321,6 +352,7 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add mesa-utils
+RUN apk add libc6-compat
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -328,7 +360,6 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositor
         s6-overlay
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && cat /etc/apk/repositories \
     && apk add \
         kodi-inputstream-adaptive \
         kodi-x11 \
@@ -341,18 +372,7 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
-COPY --link --from=build-base /build/glibc/output/ /
-
-ARG GLIBC_VERSION
-
-RUN apk add --force-overwrite \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk" \
-    && rm \
-        "glibc-${GLIBC_VERSION}.apk" \
-        "glibc-bin-${GLIBC_VERSION}.apk" \
-        "glibc-i18n-${GLIBC_VERSION}.apk"
+COPY --link --from=nvidia /build/nvidia/output/ /
 
 RUN rm -rf /var/cache/apk/*
 

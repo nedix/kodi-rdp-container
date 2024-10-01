@@ -18,8 +18,6 @@ export __GLX_VENDOR_LIBRARY_NAME="$(cat /run/s6/container_environment/__GLX_VEND
 
 /usr/bin/glxinfo -B
 
-/usr/bin/vainfo --display drm --device "/dev/dri/$(ls /dev/dri | grep -E "renderD[0-9]+" | head -n 1)"
-
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 /usr/bin/kodi
