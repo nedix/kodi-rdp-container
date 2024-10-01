@@ -309,7 +309,7 @@ ARG MESA_VERSION
 
 RUN wget -qO- "https://archive.mesa3d.org/mesa-${MESA_VERSION}.tar.xz" \
     | tar -xzJf - --strip-components=1 \
-    && echo '#define MESA_GIT_SHA1 ""' > git_sha1.h \
+    && echo '#define MESA_GIT_SHA1 ""' > ./src/git_sha1.h \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
