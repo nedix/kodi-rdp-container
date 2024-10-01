@@ -309,6 +309,7 @@ ARG MESA_VERSION
 
 RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VERSION}/mesa-mesa-${MESA_VERSION}.tar.gz" \
     | tar -xzf - --strip-components=1 \
+    && export MESA_GIT_SHA1_OVERRIDE=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
@@ -337,8 +338,8 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dshared-glapi=enabled \
         -Dshared-llvm=enabled \
         -Dvideo-codecs=all \
-        -Dvulkan-drivers="" \
-        -Dvulkan-layers="" \
+        -Dvulkan-drivers=nouveau,amd,swrast,intel,broadcom \
+        -Dvulkan-layers=device-select,overlay \
     && DESTDIR=/build/mesa/output ninja -C build install
 
 FROM alpine:${ALPINE_VERSION} AS nvidia
