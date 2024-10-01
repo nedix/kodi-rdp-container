@@ -266,9 +266,8 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
     && wget -q "https://download.nvidia.com/XFree86/${NVIDIA_ARCHITECTURE}/${NVIDIA_VERSION}/NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
     && chmod +x "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
     && "./NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" --extract-only \
-    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run"
-
-RUN ( \
+    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && ( \
         cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
         && install -Dm644 "10_nvidia.json"                           -t "/build/nvidia/output/usr/share/glvnd/egl_vendor.d" \
         && install -Dm644 "20_nvidia_xcb.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
