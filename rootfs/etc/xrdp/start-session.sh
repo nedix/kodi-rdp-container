@@ -21,7 +21,7 @@ set -x
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/vglrun +glx /usr/bin/kodi
+/usr/bin/kodi
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
