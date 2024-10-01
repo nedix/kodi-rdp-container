@@ -452,6 +452,7 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
+RUN apk add mesa-dri-gallium mesa-va-gallium
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -489,7 +490,7 @@ COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
 COPY --link --from=libglvnd /build/libglvnd/output/ /
-COPY --link --from=mesa /build/mesa/output/ /
+#COPY --link --from=mesa /build/mesa/output/ /
 COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
 COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
