@@ -511,17 +511,20 @@ RUN mkdir -p \
     ) \
     && install -Dm755 GLIBCFAKE.so.0 -t /build/glibmus/output/lib/ \
     && install -Dm755 "$LOADER_NAME" -t /build/glibmus/output/lib/ \
-    && for LINK in \
-        libc.so.6 \
-        libcrypt.so.1 \
-        libm.so.6 \
-        libpthread.so.0 \
-        libresolv.so.2 \
-        librt.so.1 \
-        libutil.so.1 \
-    ; do \
-        ln -s /build/glibmus/output/lib/GLIBCFAKE.so.0 "/build/glibmus/output/lib/${LINK}" \
-    ; done
+    && ( \
+        cd ./output/lib \
+        && for LINK in \
+            libc.so.6 \
+            libcrypt.so.1 \
+            libm.so.6 \
+            libpthread.so.0 \
+            libresolv.so.2 \
+            librt.so.1 \
+            libutil.so.1 \
+        ; do \
+            ln -s GLIBCFAKE.so.0 "$LINK" \
+        ; done \
+    )
 
 FROM alpine:${ALPINE_VERSION}
 
@@ -605,7 +608,7 @@ COPY --link --from=glibmus /build/glibmus/output/ /
 
 COPY /rootfs/ /
 
-ENV NVIDIA_DRIVER_CAPABILITIES compute,graphics,utility
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility
 
 ENTRYPOINT ["/entrypoint.sh"]
 
