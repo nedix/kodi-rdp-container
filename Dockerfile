@@ -269,9 +269,14 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
     && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
     && mkdir -p \
         /build/nvidia/output/etc/ld.so.conf.d \
+        /build/nvidia/output/etc/vulkan/icd.d \
         /build/nvidia/output/lib/nvidia \
     && find "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \( -name "*.so" -o -name "*.so.*" \) -exec mv {} /build/nvidia/output/lib/nvidia \; \
-    && echo "/lib/nvidia" > /build/nvidia/output/etc/ld.so.conf.d/nvidia.conf
+    && echo "/lib/nvidia" > /build/nvidia/output/etc/ld.so.conf.d/nvidia.conf \
+    && ( \
+        cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
+        && cp 10_nvidia.json 10_nvidia_wayland.json 15_nvidia_gbm.json 20_nvidia_xcb.json 20_nvidia_xlib.json /build/nvidia/output/etc/vulkan/icd.d/ \
+    )
 
 FROM alpine:${ALPINE_VERSION}
 
