@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 
 : ${EGL_PLATFORM}
-: ${GALLIUM_DRIVER}
-: ${LIBVA_DRIVER_NAME}
+: ${GALLIUM_DRIVER:="nouveau"}
+: ${LIBVA_DRIVER_NAME:="gallium"}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="nouveau"}
 : ${NOUVEAU_USE_ZINK:="0"}
 : ${PASSWORD_HASH}
-: ${__GLX_VENDOR_LIBRARY_NAME}
+: ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
 addgroup pulse-access
 
