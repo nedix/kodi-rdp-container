@@ -358,11 +358,6 @@ RUN apk add \
         libxv \
         linux-pam \
         llvm17-libs \
-        mesa-dri-gallium \
-        mesa-egl \
-        mesa-gl \
-        mesa-va-gallium \
-        mesa-vdpau-gallium \
         openssl \
         opus \
         pixman \
@@ -377,15 +372,9 @@ RUN apk add \
 
 RUN apk add \
         x264-libs \
-        x265-libs \
-        xf86-video-amdgpu \
-        xf86-video-ati \
-        xf86-video-fbdev \
-        xf86-video-nouveau \
-        xf86-video-nv
+        x265-libs
 
 RUN apk add openssh sudo
-RUN apk add mesa-utils
 RUN apk add libc6-compat
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
