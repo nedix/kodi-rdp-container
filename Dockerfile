@@ -524,7 +524,7 @@ COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
 COPY --link --from=libglvnd /build/libglvnd/output/ /
 COPY --link --from=mesa /build/mesa/output/ /
-COPY --link --from=nvidia /build/nvidia/output/ /
+#COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/output/ /
 
 COPY /rootfs/ /
