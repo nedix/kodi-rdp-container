@@ -12,6 +12,8 @@ ARG XORGXRDP_VERSION=0.10.2
 ARG XORG_SERVER_VERSION=21.1.13
 ARG XRDP_VERSION=0.10.1
 
+ENV NVIDIA_DRIVER_CAPABILITIES compute,graphics,utility
+
 FROM alpine:${ALPINE_VERSION} AS build-base
 
 # seatd
@@ -202,7 +204,6 @@ RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERS
     && sed -E \
         -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
-        -e "/^\s*Load \"glx\"$/d" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
@@ -485,6 +486,7 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
+RUN apk add vulkan-tools
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
