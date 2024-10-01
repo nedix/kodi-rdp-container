@@ -1,5 +1,6 @@
 ARG ALPINE_VERSION=3.20
 ARG ARCHITECTURE
+ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.7
 ARG NVIDIA_VERSION=560.35.03
@@ -483,6 +484,25 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
         mkrundir \
         skalibs-dev
 
+ARG GLIBC_VERSION
+
+RUN mkdir -p /build/glibc/output/etc/apk/keys/ \
+    && wget -q -O /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && cp /build/glibc/output/etc/apk/keys/sgerrand.rsa.pub /etc/apk/keys/ \
+    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
+    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" \
+    && wget -q "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk" \
+    && apk add --force-overwrite \
+        "glibc-${GLIBC_VERSION}.apk" \
+        "glibc-bin-${GLIBC_VERSION}.apk" \
+        "glibc-i18n-${GLIBC_VERSION}.apk" \
+    && rm \
+        "glibc-${GLIBC_VERSION}.apk" \
+        "glibc-bin-${GLIBC_VERSION}.apk" \
+        "glibc-i18n-${GLIBC_VERSION}.apk"
+
+RUN rm -rf /var/cache/apk/*
+
 COPY --link --from=seatd /build/seatd/output/ /
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -494,8 +514,6 @@ COPY --link --from=mesa /build/mesa/output/ /
 COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
 COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
-
-RUN rm -rf /var/cache/apk/*
 
 COPY /rootfs/ /
 
