@@ -12,8 +12,6 @@ ARG XORGXRDP_VERSION=0.10.2
 ARG XORG_SERVER_VERSION=21.1.13
 ARG XRDP_VERSION=0.10.1
 
-ENV NVIDIA_DRIVER_CAPABILITIES compute,graphics,utility
-
 FROM alpine:${ALPINE_VERSION} AS build-base
 
 # seatd
@@ -529,6 +527,8 @@ COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/output/ /
 
 COPY /rootfs/ /
+
+ENV NVIDIA_DRIVER_CAPABILITIES compute,graphics,utility
 
 ENTRYPOINT ["/entrypoint.sh"]
 
