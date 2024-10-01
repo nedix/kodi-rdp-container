@@ -3,7 +3,7 @@ ARG ARCHITECTURE
 ARG GLIBC_VERSION=2.35-r1
 ARG LIBGLVND_VERSION=1.7.0
 ARG MESA_VERSION=24.1.4
-ARG NVIDIA_VERSION=535.161.07
+ARG NVIDIA_VERSION=560.35.03
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
@@ -370,7 +370,28 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
         cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
         && install -Dm644 "10_nvidia.json"                           -t "/build/nvidia/output/usr/share/glvnd/egl_vendor.d" \
         && install -Dm644 "15_nvidia_gbm.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
+        && install -Dm644 "nvidia_icd.json"                          -t "/build/nvidia/output/usr/share/vulkan/icd.d" \
+        && install -Dm644 "nvidia_layers.json"                       -t "/build/nvidia/output/usr/share/vulkan/implicit_layer.d" \
+        && install -Dm755 "libEGL_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv1_CM_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv2_nvidia.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLX_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libglxserver_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib/nvidia/xorg" \
+        && install -Dm755 "libnvidia-allocator.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-api.so.1"                       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-cfg.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xcb.so.1"                   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xlib.so.1"                  -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-eglcore.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-encode.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-fbc.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glcore.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glsi.so.${NVIDIA_VERSION}"      -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glvkspirv.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-gpucomp.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-ml.so.${NVIDIA_VERSION}"        -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libvdpau_nvidia.so.${NVIDIA_VERSION}"     -t "/build/nvidia/output/usr/lib/vdpau" \
+        && install -Dm755 "nvidia-smi"                               -t "/build/nvidia/output/usr/bin/nvidia-smi" \
         && install -Dm755 "nvidia_drv.so"                            -t "/build/nvidia/output/usr/lib/xorg/modules/drivers" \
         && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so.1" \
         && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so" \
