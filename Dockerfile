@@ -283,7 +283,6 @@ RUN apk add \
         libxshmfence-dev \
         libxxf86vm-dev \
         llvm17-dev \
-        mesa-egl \
         meson \
         musl-dev \
         pkgconf \
@@ -316,7 +315,7 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dbackend_max_links=2 \
         -Ddri-drivers-path=/usr/lib/xorg/modules/dri \
         -Degl=enabled \
-        -Dgallium-drivers=swrast,v3d,vc4,zink \
+        -Dgallium-drivers=nouveau,swrast,v3d,vc4,zink \
         -Dgallium-extra-hud=true \
         -Dgallium-nine=false \
         -Dgallium-rusticl=false \
@@ -336,7 +335,7 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dshared-glapi=enabled \
         -Dshared-llvm=enabled \
         -Dvideo-codecs=all \
-        -Dvulkan-drivers=amd,swrast,intel,broadcom \
+        -Dvulkan-drivers=nouveau,amd,swrast,intel,broadcom \
         -Dvulkan-layers=device-select,overlay \
     && DESTDIR=/build/mesa/output ninja -C build install
 
