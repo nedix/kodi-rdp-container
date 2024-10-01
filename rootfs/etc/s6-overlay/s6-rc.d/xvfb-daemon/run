@@ -2,13 +2,12 @@
 
 s6-envdir /run/s6/container_environment
 
-exec env -u DISPLAY /usr/bin/vglrun +glx /usr/bin/Xvfb :0.0 \
+exec env -u DISPLAY /usr/bin/Xvfb :0.0 \
     -nocursor \
     -noreset \
     +extension COMPOSITE \
     +extension DAMAGE \
     +extension DOUBLE-BUFFER \
-    +extension GLX \
     +extension RANDR \
     +extension X-Resource \
     +extension XFIXES \

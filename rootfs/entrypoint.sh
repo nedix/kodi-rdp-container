@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 : ${EGL_PLATFORM}
-: ${GALLIUM_DRIVER:="nouveau"}
-: ${LIBVA_DRIVER_NAME:="nouveau"}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="nouveau"}
+: ${GALLIUM_DRIVER}
+: ${LIBVA_DRIVER_NAME}
+: ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${NOUVEAU_USE_ZINK:="0"}
 : ${PASSWORD_HASH}
 : ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
@@ -25,7 +25,6 @@ exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="true" \
-    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/lib/nvidia:/lib/x86_64-linux-gnu/nvidia/xorg" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \

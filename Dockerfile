@@ -202,6 +202,7 @@ RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERS
     && sed -E \
         -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
+        -e "/^\s*Load \"glx\"$/d" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
