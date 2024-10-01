@@ -317,7 +317,7 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dbackend_max_links=2 \
         -Ddri-drivers-path=/usr/lib/xorg/modules/dri \
         -Degl=enabled \
-        -Dgallium-drivers=nouveau,swrast,tegra,v3d,vc4,zink \
+        -Dgallium-drivers=swrast,tegra,v3d,vc4,zink \
         -Dgallium-extra-hud=true \
         -Dgallium-nine=true \
         -Dgallium-rusticl=true \
