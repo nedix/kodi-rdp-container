@@ -15,7 +15,7 @@ export __GLX_VENDOR_LIBRARY_NAME="$(cat /run/s6/container_environment/__GLX_VEND
 
 /usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
-/usr/bin/eglinfo -B
+/usr/bin/vglrun -glx eglinfo egl -B
 
 /usr/bin/glxinfo -B
 
