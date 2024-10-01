@@ -400,10 +400,16 @@ RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION
     && cmake \
         -B build \
         -G"Unix Makefiles" \
-        -DVGL_FAKEOPENCL="OFF" \
         -DCMAKE_C_FLAGS="-fuse-ld=lld" \
         -DCMAKE_CXX_FLAGS="-fuse-ld=lld" \
-    && (cd build && make -j $(( $(nproc) + 1 )))
+        -DCMAKE_INSTALL_LIBDIR="lib" \
+        -DCMAKE_INSTALL_PREFIX="/usr" \
+        -DVGL_FAKEOPENCL="OFF" \
+    && ( \
+        cd build \
+        && make -j $(( $(nproc) + 1 )) \
+        && make DESTDIR=/build/virtualgl/output install \
+    )
 
 FROM alpine:${ALPINE_VERSION}
 
@@ -457,7 +463,6 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
-RUN apk add mesa-utils
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -497,8 +502,7 @@ COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ 
 COPY --link --from=libglvnd /build/libglvnd/output/ /
 COPY --link --from=mesa /build/mesa/output/ /
 COPY --link --from=nvidia /build/nvidia/output/ /
-COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
-COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
+COPY --link --from=virtualgl /build/virtualgl/output/ /
 
 COPY /rootfs/ /
 

@@ -21,7 +21,7 @@ export __GLX_VENDOR_LIBRARY_NAME="$(cat /run/s6/container_environment/__GLX_VEND
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/vglrun +egl /usr/bin/kodi
+/usr/bin/vglrun +glx /usr/bin/kodi
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
