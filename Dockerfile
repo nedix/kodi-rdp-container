@@ -377,8 +377,6 @@ RUN test -n "$ARCHITECTURE" || case $(uname -m) in \
         && install -Dm755 "libnvidia-allocator.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libnvidia-api.so.1"                       -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libnvidia-cfg.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
-        && install -Dm755 "libnvidia-egl-xcb.so.1"                   -t "/build/nvidia/output/usr/lib" \
-        && install -Dm755 "libnvidia-egl-xlib.so.1"                  -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libnvidia-eglcore.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libnvidia-encode.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
         && install -Dm755 "libnvidia-fbc.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
