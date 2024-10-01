@@ -337,8 +337,8 @@ RUN wget -qO- "https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${MESA_VE
         -Dshared-glapi=enabled \
         -Dshared-llvm=enabled \
         -Dvideo-codecs=all \
-        -Dvulkan-drivers=nouveau,amd,swrast,intel,broadcom \
-        -Dvulkan-layers=device-select,overlay \
+        -Dvulkan-drivers="" \
+        -Dvulkan-layers="" \
     && DESTDIR=/build/mesa/output ninja -C build install
 
 FROM alpine:${ALPINE_VERSION} AS nvidia
