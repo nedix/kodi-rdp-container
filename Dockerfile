@@ -245,6 +245,21 @@ RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v$
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR=/build/pulseaudio-module-xrdp/output install
 
+FROM build-base AS libglvnd
+
+WORKDIR /build/libglvnd
+
+ARG LIBGLVND_VERSION
+
+RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
+    | tar -xzf - --strip-components=1 \
+    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+    && meson build \
+        --prefix=/usr \
+        -Db_lto=true \
+        -Db_ndebug=true \
+    && DESTDIR=/build/libglvnd/output ninja -C build install
+
 FROM alpine:${ALPINE_VERSION} AS nvidia
 
 RUN apk add \
@@ -376,6 +391,7 @@ RUN apk add \
 
 RUN apk add openssh sudo
 RUN apk add libc6-compat
+RUN apk add mesa-gl
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
@@ -395,6 +411,7 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --link --from=libglvnd /build/libglvnd/output/ /
 COPY --link --from=nvidia /build/nvidia/output/ /
 COPY --link --from=virtualgl /build/virtualgl/build/bin/vglrun /build/virtualgl/build/bin/vglclient /build/virtualgl/build/bin/vglconfig /usr/bin/
 COPY --link --from=virtualgl /build/virtualgl/build/lib/libvglfaker.so /build/virtualgl/build/lib/libdlfaker.so /build/virtualgl/build/lib/libGLdlfakerut.so /usr/lib/
