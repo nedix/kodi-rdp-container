@@ -352,7 +352,7 @@ COPY --link --from=mkrundir /build/mkrundir/output/ /
 
 COPY /rootfs/ /
 
-ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
 
 ENTRYPOINT ["/entrypoint.sh"]
 
