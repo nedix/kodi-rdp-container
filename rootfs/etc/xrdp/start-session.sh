@@ -11,7 +11,7 @@ set -x
 : ${NOUVEAU_USE_ZINK:="$(cat /run/s6/container_environment/NOUVEAU_USE_ZINK)"}
 : ${VK_ICD_FILENAMES:="$(cat /run/s6/container_environment/VK_ICD_FILENAMES)"}
 : ${VK_LAYER_PATH:="$(cat /run/s6/container_environment/VK_LAYER_PATH)"}
-: ${XDG_RUNTIME_DIR:="/run/user-0"}
+: ${XDG_RUNTIME_DIR:="$(/usr/bin/mkrundir)"}
 : ${XDG_SESSION_TYPE:="$(cat /run/s6/container_environment/XDG_SESSION_TYPE)"}
 : ${__GLX_VENDOR_LIBRARY_NAME:="$(cat /run/s6/container_environment/__GLX_VENDOR_LIBRARY_NAME)"}
 

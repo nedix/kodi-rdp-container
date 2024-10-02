@@ -24,8 +24,6 @@ usermod -aG pulse-access pulse
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
-mkdir /run/user-0
-
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
@@ -38,7 +36,7 @@ exec env -i \
     NOUVEAU_USE_ZINK="$NOUVEAU_USE_ZINK" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
-    XDG_RUNTIME_DIR="/run/user-0" \
+    XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
     __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     /init
