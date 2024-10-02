@@ -136,6 +136,7 @@ RUN dnf install -y \
         libX11-devel \
         libXfixes-devel \
         libXrandr-devel \
+        nasm \
         openssl-devel \
         pam-devel \
         pixman-devel \
