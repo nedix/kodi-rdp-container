@@ -1,11 +1,13 @@
 ARG ALPINE_VERSION=3.20
-ARG ARCHITECTURE
-ARG GLIBC_VERSION=2.35-r1
+ARG GCOMPAT_VERSION=9a75570c55def665acb935d8ca903bbca65b82d2
+ARG GLIBMUS_VERSION=1cd8a307652e90729a8d08ed4b0a38c05bb99500
 ARG LIBGLVND_VERSION=1.7.0
-ARG MESA_VERSION=24.1.7
+ARG MESA_VERSION=24.1.4
+ARG NVIDIA_VERSION=560.35.03
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG SEATD_VERSION=0.8.0
+ARG VIRTUALGL_VERSION=3.1.1
 ARG XORGXRDP_VERSION=0.10.2
 ARG XORG_SERVER_VERSION=21.1.13
 ARG XRDP_VERSION=0.10.1
@@ -78,15 +80,6 @@ RUN apk add \
         xorgproto \
         xtrans
 
-# libglvnd
-RUN apk add \
-        gcc \
-        libx11-dev \
-        libxext-dev \
-        meson \
-        musl-dev \
-        samurai
-
 FROM build-base AS seatd
 
 WORKDIR /build/seatd
@@ -94,7 +87,7 @@ WORKDIR /build/seatd
 ARG SEATD_VERSION
 
 RUN wget -qO- "https://github.com/kennylevinsen/seatd/tarball/${SEATD_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1 -Wno-error=unused-parameter" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
@@ -111,7 +104,7 @@ WORKDIR /build/xorg-server
 ARG XORG_SERVER_VERSION
 
 RUN wget -qO- "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server-${XORG_SERVER_VERSION}/xserver-xorg-server-${XORG_SERVER_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
@@ -191,7 +184,7 @@ WORKDIR /build/xorgxrdp
 ARG XORGXRDP_VERSION
 
 RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xorgxrdp/module/rdpClientCon.c \
@@ -208,7 +201,7 @@ RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERS
     && make DESTDIR=/build/xorgxrdp/output install \
     && sed -E \
         -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
-        -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm vc4 v3d\"|" \
+        -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
@@ -218,7 +211,7 @@ WORKDIR /build/pulseaudio
 ARG PULSEAUDIO_VERSION
 
 RUN wget -qO- "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-${PULSEAUDIO_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && sed -E \
         -e "s|libintl_dep = .*|libintl_dep = cc.find_library('intl')|" \
         -i meson.build \
@@ -240,7 +233,7 @@ WORKDIR /build/pulseaudio-module-xrdp
 ARG PULSEAUDIO_MODULE_XRDP_VERSION
 
 RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v${PULSEAUDIO_MODULE_XRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
@@ -260,7 +253,7 @@ WORKDIR /build/libglvnd
 ARG LIBGLVND_VERSION
 
 RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+    | tar -xzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && meson build \
         --prefix=/usr \
@@ -268,16 +261,274 @@ RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" 
         -Db_ndebug=true \
     && DESTDIR=/build/libglvnd/output ninja -C build install
 
-FROM alpine:${ALPINE_VERSION}
+FROM build-base AS mesa
 
 COPY --link --from=libglvnd /build/libglvnd/output/ /
 
-ARG GLIBC_VERSION
+RUN apk add \
+        bison \
+        clang17-dev \
+        cmake \
+        flex-dev \
+        g++ \
+        glslang-dev \
+        libclc-dev \
+        libdrm-dev \
+        libelf \
+        libx11-dev \
+        libxcb-dev \
+        libxext-dev \
+        libxfixes-dev \
+        libxrandr-dev \
+        libxshmfence-dev \
+        libxxf86vm-dev \
+        llvm17-dev \
+        meson \
+        musl-dev \
+        pkgconf \
+        py3-pip \
+        python3 \
+        rust-bindgen \
+        rustfmt \
+        samurai \
+        spirv-llvm-translator-dev \
+        vulkan-loader-dev \
+        wayland-dev \
+        wayland-protocols \
+    && pip install --break-system-packages \
+        mako \
+        ply \
+        pyaml \
+        pycparser
 
-RUN wget -q https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -O /etc/apk/keys/sgerrand.rsa.pub \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
-    && apk add "glibc-${GLIBC_VERSION}.apk" \
-    && rm "glibc-${GLIBC_VERSION}.apk"
+RUN apk add cbindgen xz
+
+WORKDIR /build/mesa
+
+ARG MESA_VERSION
+
+RUN wget -qO- "https://archive.mesa3d.org/mesa-${MESA_VERSION}.tar.xz" \
+    | tar -xzJf - --strip-components=1 \
+    && echo '#define MESA_GIT_SHA1 ""' > ./src/git_sha1.h \
+    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+    && meson setup build \
+        --prefix=/usr \
+        -Db_lto=true \
+        -Db_ndebug=true \
+        -Dbackend_max_links=2 \
+        -Ddri-drivers-path=/usr/lib/xorg/modules/dri \
+        -Degl=enabled \
+        -Dgallium-drivers=nouveau,swrast,v3d,vc4,zink \
+        -Dgallium-extra-hud=true \
+        -Dgallium-nine=false \
+        -Dgallium-rusticl=false \
+        -Dgallium-va=disabled \
+        -Dgallium-vdpau=disabled \
+        -Dgallium-xa=disabled \
+        -Dgbm=enabled \
+        -Dgles1=enabled \
+        -Dgles2=enabled \
+        -Dglvnd=enabled \
+        -Dglx=dri \
+        -Dllvm=enabled \
+        -Dopengl=true \
+        -Dosmesa=true \
+        -Dplatforms=x11 \
+        -Drust_std=2021 \
+        -Dshared-glapi=enabled \
+        -Dshared-llvm=enabled \
+        -Dvideo-codecs=all \
+        -Dvulkan-drivers=nouveau,amd,swrast,intel,broadcom \
+        -Dvulkan-layers=device-select,overlay \
+    && DESTDIR=/build/mesa/output ninja -C build install
+
+FROM alpine:${ALPINE_VERSION} AS nvidia
+
+RUN apk add \
+        zstd
+
+WORKDIR /build/nvidia
+
+ARG NVIDIA_VERSION
+
+RUN case $(uname -m) in \
+        aarch64) NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        amd64)   NVIDIA_ARCHITECTURE="Linux-x86_64"; ;; \
+        arm64)   NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        armv8b)  NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        armv8l)  NVIDIA_ARCHITECTURE="Linux-aarch64"; ;; \
+        x86_64)  NVIDIA_ARCHITECTURE="Linux-x86_64"; ;; \
+        *) echo "Unsupported architecture, exiting..."; exit 1; ;; \
+    esac \
+    && wget -q "https://download.nvidia.com/XFree86/${NVIDIA_ARCHITECTURE}/${NVIDIA_VERSION}/NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && chmod +x "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && "./NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" --extract-only \
+    && rm "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}.run" \
+    && ( \
+        cd "NVIDIA-${NVIDIA_ARCHITECTURE}-${NVIDIA_VERSION}" \
+        && install -Dm644 "10_nvidia.json"                           -t "/build/nvidia/output/usr/share/glvnd/egl_vendor.d" \
+        && install -Dm644 "15_nvidia_gbm.json"                       -t "/build/nvidia/output/usr/share/egl/egl_external_platform.d" \
+        && install -Dm644 "nvidia_icd.json"                          -t "/build/nvidia/output/usr/share/vulkan/icd.d" \
+        && install -Dm644 "nvidia_layers.json"                       -t "/build/nvidia/output/usr/share/vulkan/implicit_layer.d" \
+        && install -Dm755 "libEGL_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv1_CM_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLESv2_nvidia.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libGLX_nvidia.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libglxserver_nvidia.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib/nvidia/xorg" \
+        && install -Dm755 "libnvidia-allocator.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-api.so.1"                       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-cfg.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xcb.so.1"                   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-egl-xlib.so.1"                  -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-eglcore.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-encode.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-fbc.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glcore.so.${NVIDIA_VERSION}"    -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glsi.so.${NVIDIA_VERSION}"      -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-glvkspirv.so.${NVIDIA_VERSION}" -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-gpucomp.so.${NVIDIA_VERSION}"   -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-ml.so.${NVIDIA_VERSION}"        -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libnvidia-tls.so.${NVIDIA_VERSION}"       -t "/build/nvidia/output/usr/lib" \
+        && install -Dm755 "libvdpau_nvidia.so.${NVIDIA_VERSION}"     -t "/build/nvidia/output/usr/lib/vdpau" \
+        && install -Dm755 "nvidia-smi"                               -t "/build/nvidia/output/usr/bin" \
+        && install -Dm755 "nvidia_drv.so"                            -t "/build/nvidia/output/usr/lib/xorg/modules/drivers" \
+        && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so.1" \
+        && ln -s "libglxserver_nvidia.so.${NVIDIA_VERSION}" "/build/nvidia/output/usr/lib/nvidia/xorg/libglxserver_nvidia.so" \
+    )
+
+FROM build-base AS virtualgl
+
+RUN apk add \
+        cmake \
+        g++ \
+        glu-dev \
+        libjpeg-turbo-dev \
+        libx11-dev \
+        libxcb-dev \
+        libxext-dev \
+        libxtst-dev \
+        libxv-dev \
+        lld \
+        make \
+        xcb-util-keysyms-dev
+
+WORKDIR /build/virtualgl
+
+ARG VIRTUALGL_VERSION
+
+RUN wget -qO- https://github.com/VirtualGL/virtualgl/tarball/${VIRTUALGL_VERSION} \
+    | tar -xzf- --strip-components=1 \
+    && cmake \
+        -B build \
+        -G"Unix Makefiles" \
+        -DCMAKE_C_FLAGS="-fuse-ld=lld" \
+        -DCMAKE_CXX_FLAGS="-fuse-ld=lld" \
+        -DCMAKE_INSTALL_LIBDIR="lib" \
+        -DCMAKE_INSTALL_PREFIX="/usr" \
+        -DVGL_FAKEOPENCL="OFF" \
+    && ( \
+        cd build \
+        && make -j $(( $(nproc) + 1 )) \
+        && make DESTDIR=/build/virtualgl/output install \
+    )
+
+FROM alpine:${ALPINE_VERSION} AS glibmus
+
+RUN apk add \
+        clang \
+        gcompat \
+        libucontext \
+        libucontext-dev \
+        make \
+        musl-dev \
+        musl-obstack \
+        musl-obstack-dev \
+        patch \
+        pkgconf
+
+COPY --link /src/glibmus/ /build/glibmus/
+
+WORKDIR /build/glibmus
+
+ARG ALPINE_VERSION
+ARG BUILDARCH
+ARG GCOMPAT_VERSION=9a75570c55def665acb935d8ca903bbca65b82d2
+ARG GLIBMUS_VERSION=1cd8a307652e90729a8d08ed4b0a38c05bb99500
+
+RUN mkdir -p \
+        gcompat \
+        output/lib/ \
+        output/lib64/ \
+    && case "$BUILDARCH" in \
+        aarch64) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; amd64) \
+            CFLAGS="-march=x86-64"; \
+            LINKER_PATH="/lib/ld-musl-x86_64.so.1" \
+            LOADER_NAME="ld-linux-x86-64.so.2" \
+        ;; arm64) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; armv8b) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; armv8l) \
+            CFLAGS="-march=armv8-a"; \
+            LINKER_PATH="/lib/ld-musl-aarch64.so.1" \
+            LOADER_NAME="ld-linux-aarch64.so.1" \
+        ;; x86_64) \
+            CFLAGS="-march=x86-64"; \
+            LINKER_PATH="/lib/ld-musl-x86_64.so.1" \
+            LOADER_NAME="ld-linux-x86-64.so.2" \
+        ;; *) echo "Unsupported architecture, exiting..."; exit 1; ;; \
+    esac \
+    && wget -qO- "https://gitlab.com/manoel-linux1/GlibMus-HQ/-/archive/${GLIBMUS_VERSION}/GlibMus-HQ-${GLIBMUS_VERSION}.tar.gz" \
+    | tar -xzf- --strip-components=1 \
+    && wget -qO- "https://git.adelielinux.org/adelie/gcompat/-/archive/${GCOMPAT_VERSION}/gcompat-${GCOMPAT_VERSION}.tar.gz" \
+    | tar -xzf- --strip-components=1 -C gcompat \
+    && patch -Np1 -i fenv.cpp.patch \
+    && export CFLAGS="-O3 -pipe ${CFLAGS}" \
+    && export CXXFLAGS="$CFLAGS" \
+    && export LDFLAGS="-Wl,--as-needed -Wl,-O3 ${CFLAGS}" \
+    && make -j $(( $(nproc) + 1 )) \
+        LINKER_PATH="$LINKER_PATH" \
+        LOADER_NAME="$LOADER_NAME" \
+        WITH_LIBUCONTEXT=1 \
+        WITH_OBSTACK="musl-obstack" \
+    && ( \
+        cd gcompat \
+        && cp -r ../patch/* . \
+        && patch -Np1 -i Makefile.patch \
+        && patch -Np1 -i loader.patch \
+        && make -j $(( $(nproc) + 1 )) \
+            LINKER_PATH="$LINKER_PATH" \
+            LOADER_NAME="$LOADER_NAME" \
+            WITH_LIBUCONTEXT=1 \
+            WITH_OBSTACK="musl-obstack" \
+    ) \
+    && install -Dm755 "$LOADER_NAME" -t /build/glibmus/output/lib64/ \
+    && install -Dm755 GLIBCFAKE.so.0 -t /build/glibmus/output/lib/ \
+    && ( \
+        cd ./output \
+        && ln -sf "../lib64/${LOADER_NAME}" "./lib/${LOADER_NAME}" \
+        && for LINK in \
+            ./lib/libc.so.6 \
+            ./lib/libcrypt.so.1 \
+            ./lib/libm.so.6 \
+            ./lib/libpthread.so.0 \
+            ./lib/libresolv.so.2 \
+            ./lib/librt.so.1 \
+            ./lib/libutil.so.1 \
+        ; do \
+            ln -s GLIBCFAKE.so.0 "$LINK" \
+        ; done \
+    )
+
+FROM alpine:${ALPINE_VERSION}
 
 RUN apk add \
         colord \
@@ -306,11 +557,6 @@ RUN apk add \
         libxv \
         linux-pam \
         llvm17-libs \
-        mesa-dri-gallium \
-        mesa-egl \
-        mesa-gl \
-        mesa-va-gallium \
-        mesa-vdpau-gallium \
         openssl \
         opus \
         pixman \
@@ -332,13 +578,15 @@ RUN apk add \
         xf86-video-nouveau \
         xf86-video-nv
 
+RUN apk add openssh sudo
+RUN apk add vulkan-tools
+
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
     && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
     && apk add \
         s6-overlay
 
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && cat /etc/apk/repositories \
     && apk add \
         kodi-inputstream-adaptive \
         kodi-x11 \
@@ -353,10 +601,20 @@ COPY --link --from=xrdp /build/xrdp/output/ /
 COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --link --from=libglvnd /build/libglvnd/output/ /
+COPY --link --from=mesa /build/mesa/output/ /
+COPY --link --from=nvidia /build/nvidia/output/ /
+COPY --link --from=virtualgl /build/virtualgl/output/ /
+COPY --link --from=glibmus /build/glibmus/output/ /
 
 COPY /rootfs/ /
 
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility
+
 ENTRYPOINT ["/entrypoint.sh"]
+
+# SSH
+EXPOSE 22
 
 # RDP
 EXPOSE 3389

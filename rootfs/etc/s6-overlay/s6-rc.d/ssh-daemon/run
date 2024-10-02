@@ -1,0 +1,3 @@
+#!/usr/bin/env execlineb
+
+exec /usr/sbin/sshd
