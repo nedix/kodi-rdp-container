@@ -17,13 +17,13 @@ set -x
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/vglrun +glx /usr/bin/glxinfo -B
+/usr/bin/glxinfo -B
 
-/usr/bin/vglrun +glx /usr/bin/eglinfo -B
+/usr/bin/eglinfo -B
 
-/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
+/usr/bin/vulkaninfo --summary
 
-/usr/bin/vglrun +glx /usr/bin/kodi --windowing=x11
+/usr/bin/kodi --windowing=x11
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log

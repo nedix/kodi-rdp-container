@@ -20,7 +20,6 @@ ARG S6_OVERLAY_VERSION
 RUN echo "exclude=openh264" >> /etc/dnf/dnf.conf \
     && dnf install -y \
         "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm" \
-        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm" \
         $BUILD_DEPS
 
 RUN case "$BUILDARCH" in \
@@ -283,11 +282,7 @@ RUN dnf install -y \
         dbus-x11 \
         libXfont2 \
         libepoxy \
-        libglvnd \
-        libglvnd-glx \
         libxcvt \
-        mesa-dri-drivers \
-        mesa-vulkan-drivers \
         openssl \
         orc \
         pixman \
@@ -300,7 +295,7 @@ RUN dnf install -y \
 
 RUN dnf install -y kodi kodi-inputstream-adaptive ffmpeg-libs
 RUN dnf install -y openssh-server sudo
-RUN dnf install -y xorg-x11-drv-nvidia-libs VirtualGL egl-gbm
+RUN dnf install -y VirtualGL egl-gbm
 RUN dnf install -y egl-utils glx-utils vulkan-tools
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
