@@ -3,11 +3,9 @@
 : ${EGL_PLATFORM}
 : ${GALLIUM_DRIVER}
 : ${LIBVA_DRIVER_NAME}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
-: ${NOUVEAU_USE_ZINK:="0"}
+: ${MESA_LOADER_DRIVER_OVERRIDE}
+: ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
-: ${VK_ICD_FILENAMES:="/usr/share/vulkan/icd.d/nvidia_icd.json"}
-: ${VK_LAYER_PATH:="/usr/share/vulkan/explicit_layer.d/"}
 : ${__GLX_VENDOR_LIBRARY_NAME}
 
 groupadd pulse-access
