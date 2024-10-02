@@ -184,7 +184,9 @@ RUN dnf install -y \
         libdrm-devel \
         libepoxy-devel \
         mesa-libgbm-devel \
-        xorg-x11-server-devel
+        nasm \
+        xorg-x11-server-devel \
+        yasm-devel
 
 WORKDIR /build/xorgxrdp
 
