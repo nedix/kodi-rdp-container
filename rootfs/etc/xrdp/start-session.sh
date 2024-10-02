@@ -12,7 +12,7 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
 /usr/bin/vulkaninfo --summary
 
-/usr/bin/kodi
+/usr/bin/vglrun /usr/bin/kodi
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
