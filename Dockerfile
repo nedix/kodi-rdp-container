@@ -20,6 +20,7 @@ ARG S6_OVERLAY_VERSION
 RUN echo "exclude=openh264" >> /etc/dnf/dnf.conf \
     && dnf install -y \
         "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm" \
+        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VERSION}.noarch.rpm" \
         $BUILD_DEPS
 
 RUN case "$BUILDARCH" in \
@@ -299,6 +300,7 @@ RUN dnf install -y \
 
 RUN dnf install -y kodi kodi-inputstream-adaptive ffmpeg-libs
 RUN dnf install -y openssh-server sudo
+RUN dnf install -y xorg-x11-drv-nvidia-libs
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
