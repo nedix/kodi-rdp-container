@@ -204,7 +204,7 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VER
     && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
-        --libdir=/usr/lib/xorg/modules \
+        --libdir=/usr/lib64/xorg/modules \
         --localstatedir=/var \
         --mandir=/usr/share/man \
         --prefix=/usr \
