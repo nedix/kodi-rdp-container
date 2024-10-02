@@ -78,6 +78,7 @@ RUN dnf install -y \
         libXinerama-devel \
         libXres-devel \
         libXv-devel \
+        libdrm-devel \
         libepoxy-devel \
         libgudev-devel \
         libxcvt-devel \
@@ -138,6 +139,7 @@ RUN dnf install -y \
         libX11-devel \
         libXfixes-devel \
         libXrandr-devel \
+        libdrm-devel \
         nasm \
         openssl-devel \
         pam-devel \
