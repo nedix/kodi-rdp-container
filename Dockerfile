@@ -300,7 +300,7 @@ RUN dnf install -y \
 
 RUN dnf install -y kodi kodi-inputstream-adaptive ffmpeg-libs
 RUN dnf install -y openssh-server sudo
-RUN dnf install -y xorg-x11-drv-nvidia-libs VirtualGL
+RUN dnf install -y xorg-x11-drv-nvidia-libs VirtualGL egl-gbm
 RUN dnf install -y egl-utils glx-utils vulkan-tools
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
