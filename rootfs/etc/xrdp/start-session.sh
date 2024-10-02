@@ -14,16 +14,16 @@ set -x
 : ${XDG_RUNTIME_DIR:="/run/user-0"}
 : ${XDG_SESSION_TYPE:="$(cat /run/s6/container_environment/XDG_SESSION_TYPE)"}
 : ${__GLX_VENDOR_LIBRARY_NAME:="$(cat /run/s6/container_environment/__GLX_VENDOR_LIBRARY_NAME)"}
-#
-#/usr/bin/vglrun +glx eglinfo egl -B
-#
-#/usr/bin/glxinfo -B
-#
-#vulkaninfo --summary
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/kodi --windowing=x11
+/usr/bin/vglrun +glx /usr/bin/glxinfo -B
+
+/usr/bin/vglrun +glx /usr/bin/eglinfo -B
+
+/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
+
+/usr/bin/vglrun +glx /usr/bin/kodi --windowing=x11
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
