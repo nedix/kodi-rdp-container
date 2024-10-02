@@ -10,18 +10,23 @@
 : ${VK_LAYER_PATH:="/usr/share/vulkan/explicit_layer.d/"}
 : ${__GLX_VENDOR_LIBRARY_NAME}
 
-addgroup pulse-access
+groupadd pulse-access
 
-adduser -D -h /home/kodi -s /bin/sh kodi
-adduser -D -h /var/run/pulse -s /sbin/nologin pulse
+useradd -m -d /home/kodi -s /bin/sh kodi
+useradd -m -d /var/run/pulse -s /sbin/nologin pulse
 
-addgroup kodi pulse-access
-addgroup pulse audio
-addgroup pulse pulse
-addgroup pulse pulse-access
+chown -R kodi /home/kodi
+chown -R pulse /var/run/pulse
+
+usermod -aG pulse-access kodi
+usermod -aG audio pulse
+usermod -aG pulse pulse
+usermod -aG pulse-access pulse
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+mkdir /run/user-0
 
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
@@ -35,7 +40,7 @@ exec env -i \
     NOUVEAU_USE_ZINK="$NOUVEAU_USE_ZINK" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
-    XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
+    XDG_RUNTIME_DIR="/run/user-0" \
     XDG_SESSION_TYPE="x11" \
     __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     /init
