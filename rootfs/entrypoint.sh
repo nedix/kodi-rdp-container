@@ -28,7 +28,7 @@ exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="true" \
-    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/glibc-compat/lib:/usr/lib" \
+    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib64:/usr/lib" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \
@@ -36,7 +36,9 @@ exec env -i \
     NOUVEAU_USE_ZINK="$NOUVEAU_USE_ZINK" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
-    XDG_RUNTIME_DIR="$(/usr/bin/mkrundir)" \
+    VK_ICD_FILENAMES="$VK_ICD_FILENAMES" \
+    VK_LAYER_PATH="$VK_LAYER_PATH" \
+    XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
     __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     /init

@@ -1,27 +1,13 @@
 #!/usr/bin/env sh
 
-set -x
+whoami
 
-: ${EGL_PLATFORM:="$(cat /run/s6/container_environment/EGL_PLATFORM)"}
-: ${GALLIUM_DRIVER:="$(cat /run/s6/container_environment/GALLIUM_DRIVER)"}
-: ${GLAMOR_DEBUG:="true"}
-: ${LIBGL_DEBUG:="verbose"}
-: ${LIBVA_DRIVER_NAME:="$(cat /run/s6/container_environment/LIBVA_DRIVER_NAME)"}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="$(cat /run/s6/container_environment/MESA_LOADER_DRIVER_OVERRIDE)"}
-: ${NOUVEAU_USE_ZINK:="$(cat /run/s6/container_environment/NOUVEAU_USE_ZINK)"}
-: ${VK_ICD_FILENAMES:="$(cat /run/s6/container_environment/VK_ICD_FILENAMES)"}
-: ${VK_LAYER_PATH:="$(cat /run/s6/container_environment/VK_LAYER_PATH)"}
-: ${XDG_RUNTIME_DIR:="$(/usr/bin/mkrundir)"}
-: ${XDG_SESSION_TYPE:="$(cat /run/s6/container_environment/XDG_SESSION_TYPE)"}
-: ${__GLX_VENDOR_LIBRARY_NAME:="$(cat /run/s6/container_environment/__GLX_VENDOR_LIBRARY_NAME)"}
+/command/s6-envdir /run/s6/container_environment /usr/bin/env | while IFS= read -r ENV_VAR; do export $ENV_VAR; done
+
+export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/glxinfo -B
-
-/usr/bin/eglinfo -B
-
-/usr/bin/vulkaninfo --summary
 
 /usr/bin/kodi --windowing=x11
 
