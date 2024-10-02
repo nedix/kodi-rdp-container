@@ -286,8 +286,6 @@ RUN dnf install -y \
         libglvnd-glx \
         libxcvt \
         mesa-dri-drivers \
-        mesa-va-drivers \
-        mesa-vdpau-drivers \
         mesa-vulkan-drivers \
         openssl \
         orc \
