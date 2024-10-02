@@ -8,6 +8,11 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
+#/usr/bin/glxinfo -B
+#
+#/usr/bin/eglinfo -B
+#
+#/usr/bin/vulkaninfo --summary
 
 /usr/bin/kodi --windowing=x11
 

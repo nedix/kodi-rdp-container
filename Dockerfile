@@ -340,6 +340,7 @@ RUN dnf install -y kodi kodi-inputstream-adaptive ffmpeg-libs
 RUN dnf install -y openssh-server sudo
 RUN dnf install -y VirtualGL egl-gbm
 RUN dnf install -y egl-utils glx-utils vulkan-tools
+RUN dnf install -y mesa-vulkan-drivers
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
