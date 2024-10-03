@@ -1,5 +1,6 @@
 ARG FEDORA_VERSION=42
 ARG HARE_VERSION=0.24.2
+ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
 ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
@@ -323,6 +324,27 @@ RUN curl -fsSL "https://git.sr.ht/~whynothugo/mkrundir/archive/v${MKRUNDIR_VERSI
     && make -j $(( $(nproc) + 1 )) all \
     && make DESTDIR="${PWD}/output" install
 
+FROM build-base AS libvdpau-va-gl
+
+RUN dnf install -y \
+        libva-devel \
+        libvdpau-devel \
+        mesa-libGL-devel
+
+WORKDIR /build/libvdpau-va-gl
+
+ARG LIBVDPAU_VA_GL_VERSION
+
+RUN curl -fsSL "https://github.com/i-rinat/libvdpau-va-gl/tarball/${LIBVDPAU_VA_GL_VERSION}" \
+    | tar -xpzf- --strip-components=1 \
+    && cmake \
+        -Bbuild \
+        -DCMAKE_BUILD_TYPE=Releas \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DLIB_INSTALL_DIR=/usr/lib64/vdpau \
+    && cmake --build build \
+    && DESTDIR="${PWD}/output" cmake --install build
+
 FROM base
 
 RUN dnf install -y \
@@ -348,7 +370,7 @@ RUN dnf install -y egl-utils glx-utils vulkan-tools
 RUN dnf install -y mesa-vulkan-drivers
 RUN dnf install -y libva-vdpau-driver mesa-vdpau-drivers mesa-va-drivers
 RUN dnf install -y xorg-x11-drv-libinput
-RUN dnf install -y libva-vdpau-driver libvdpau-va-gl
+RUN dnf install -y libva-vdpau-driver
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -356,6 +378,7 @@ COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
 COPY --link --from=mkrundir /build/mkrundir/output/ /
+COPY --link --from=libvdpau-va-gl /build/libvdpau-va-gl/output/ /
 
 RUN ldconfig
 
