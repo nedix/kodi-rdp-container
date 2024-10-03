@@ -7,6 +7,7 @@
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
 : ${VDPAU_DRIVER:="va_gl"}
+: ${VDPAU_QUIRKS:="AvoidVA,XCloseDisplay"}
 : ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
 : ${__GLX_VENDOR_LIBRARY_NAME}
 
@@ -39,6 +40,7 @@ exec env -i \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
     VDPAU_DRIVER="$VDPAU_DRIVER" \
+    VDPAU_QUIRKS="$VDPAU_QUIRKS" \
     VGL_GLLIB="$VGL_GLLIB" \
     VK_ICD_FILENAMES="$VK_ICD_FILENAMES" \
     VK_LAYER_PATH="$VK_LAYER_PATH" \
