@@ -86,6 +86,7 @@ RUN dnf install -y \
         libxshmfence-devel \
         mesa-libEGL-devel \
         mesa-libGL-devel \
+        mesa-libgbm-devel \
         openssl-devel \
         pixman-devel \
         systemtap-sdt-devel \
@@ -103,7 +104,7 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         --prefix=/usr \
         -Db_lto=true \
         -Db_ndebug=true \
-        -Ddefault_font_path=/usr/share/fonts/misc,/usr/share/fonts/100dpi:unscaled,/usr/share/fonts/75dpi:unscaled,/usr/share/fonts/TTF,/usr/share/fonts/Type1 \
+        -Ddefault_font_path="catalogue:/etc/X11/fontpath.d,built-ins" \
         -Ddpms=true \
         -Ddri1=true \
         -Ddri2=true \
