@@ -29,6 +29,7 @@ exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="true" \
+    LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib64:/usr/lib" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \
