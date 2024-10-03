@@ -348,6 +348,7 @@ RUN dnf install -y egl-utils glx-utils vulkan-tools
 RUN dnf install -y mesa-vulkan-drivers
 RUN dnf install -y libva-vdpau-driver mesa-vdpau-drivers mesa-va-drivers
 RUN dnf install -y xorg-x11-drv-libinput
+RUN dnf install -y libva-vdpau-driver libvdpau-va-gl
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
