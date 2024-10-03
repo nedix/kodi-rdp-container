@@ -13,11 +13,11 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
-/usr/bin/vglrun +glx /usr/bin/glxinfo -B
-
-/usr/bin/vglrun +glx /usr/bin/eglinfo -B
-
-/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
+#/usr/bin/vglrun +glx /usr/bin/glxinfo -B
+#
+#/usr/bin/vglrun +glx /usr/bin/eglinfo -B
+#
+#/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
 
 /usr/bin/vglrun +glx /usr/bin/kodi --windowing=x11 --gl-interface=glx
 
