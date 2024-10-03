@@ -353,6 +353,8 @@ COPY --link --from=pulseaudio /build/pulseaudio/output/ /
 COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
 COPY --link --from=mkrundir /build/mkrundir/output/ /
 
+RUN ldconfig
+
 COPY /rootfs/ /
 
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
