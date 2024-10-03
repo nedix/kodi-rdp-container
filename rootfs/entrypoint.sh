@@ -6,7 +6,7 @@
 : ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
-: ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
+: ${VGL_GLLIB:="/usr/lib64/libGLX.so.0"}
 : ${__GLX_VENDOR_LIBRARY_NAME}
 
 groupadd pulse-access
