@@ -6,6 +6,7 @@
 : ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
+: ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
 : ${__GLX_VENDOR_LIBRARY_NAME}
 
 groupadd pulse-access
@@ -36,6 +37,7 @@ exec env -i \
     NOUVEAU_USE_ZINK="$NOUVEAU_USE_ZINK" \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME="$(( 60 * 1000 ))" \
     SEATD_VTBOUND="0" \
+    VGL_GLLIB="$VGL_GLLIB" \
     VK_ICD_FILENAMES="$VK_ICD_FILENAMES" \
     VK_LAYER_PATH="$VK_LAYER_PATH" \
     XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)" \
