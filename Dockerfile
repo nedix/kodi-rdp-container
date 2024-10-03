@@ -109,6 +109,7 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Ddri1=true \
         -Ddri2=true \
         -Ddri3=true \
+        -Dfallback_input_driver=libinput \
         -Dglamor=true \
         -Dglx=true \
         -Dhal=false \
@@ -346,6 +347,7 @@ RUN dnf install -y VirtualGL egl-gbm
 RUN dnf install -y egl-utils glx-utils vulkan-tools
 RUN dnf install -y mesa-vulkan-drivers
 RUN dnf install -y libva-vdpau-driver mesa-vdpau-drivers mesa-va-drivers
+RUN dnf install -y xorg-x11-drv-libinput
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
