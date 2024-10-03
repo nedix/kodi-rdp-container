@@ -3,7 +3,7 @@
 : ${EGL_PLATFORM:="surfaceless"}
 : ${GALLIUM_DRIVER}
 : ${LIBVA_DRIVER_NAME:="vdpau"}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="vdpau"}
+: ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
 : ${VDPAU_DRIVER:="va_gl"}
