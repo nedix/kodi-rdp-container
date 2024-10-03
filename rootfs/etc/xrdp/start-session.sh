@@ -19,7 +19,7 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 #
 #/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
 
-/usr/bin/vglrun +glx /usr/bin/kodi --windowing=x11 --gl-interface=glx
+/usr/bin/kodi --windowing=x11 --gl-interface="$KODI_GL_INTERFACE"
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
