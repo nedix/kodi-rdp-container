@@ -2,7 +2,6 @@
 
 : ${EGL_PLATFORM}
 : ${GALLIUM_DRIVER}
-: ${KODI_GL_INTERFACE:=glx}
 : ${LIBVA_DRIVER_NAME}
 : ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${NOUVEAU_USE_ZINK}
@@ -30,7 +29,6 @@ exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="true" \
-    KODI_GL_INTERFACE="$KODI_GL_INTERFACE" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib64:/usr/lib" \
     LIBGL_DEBUG="verbose" \
     LIBSEAT_BACKEND="builtin" \
