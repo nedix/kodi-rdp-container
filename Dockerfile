@@ -115,6 +115,7 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Dlisten_local=true \
         -Dlisten_tcp=false \
         -Dlisten_unix=true \
+        -Dmodule_dir=/usr/lib64/xorg/modules \
         -Dpciaccess=true \
         -Dsecure-rpc=false \
         -Dsuid_wrapper=true \
@@ -271,7 +272,7 @@ RUN curl -fsSL "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v
     && ./bootstrap \
     && ./configure \
         PULSE_DIR=/build/pulseaudio \
-        --libdir=/usr/lib/xorg/modules \
+        --libdir=/usr/lib64/xorg/modules \
         --localstatedir=/var \
         --mandir=/usr/share/man \
         --prefix=/usr \
