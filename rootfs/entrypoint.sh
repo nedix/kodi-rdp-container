@@ -1,15 +1,15 @@
 #!/usr/bin/env sh
 
-: ${EGL_PLATFORM}
+: ${EGL_PLATFORM:="surfaceless"}
 : ${GALLIUM_DRIVER}
 : ${LIBVA_DRIVER_NAME:="vdpau"}
-: ${MESA_LOADER_DRIVER_OVERRIDE}
+: ${MESA_LOADER_DRIVER_OVERRIDE:="vdpau"}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
 : ${VDPAU_DRIVER:="va_gl"}
 : ${VDPAU_QUIRKS:="AvoidVA,XCloseDisplay"}
 : ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
-: ${__GLX_VENDOR_LIBRARY_NAME}
+: ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
 groupadd pulse-access
 
