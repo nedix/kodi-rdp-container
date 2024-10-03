@@ -2,6 +2,7 @@
 
 : ${EGL_PLATFORM:="surfaceless"}
 : ${GALLIUM_DRIVER}
+: ${LIBGL_KOPPER_DRI2:="1"}
 : ${LIBVA_DRIVER_NAME:="vdpau"}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
 : ${NOUVEAU_USE_ZINK}
@@ -33,6 +34,7 @@ exec env -i \
     GLAMOR_DEBUG="true" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib64:/usr/lib" \
     LIBGL_DEBUG="verbose" \
+    LIBGL_KOPPER_DRI2="$LIBGL_KOPPER_DRI2" \
     LIBSEAT_BACKEND="builtin" \
     LIBVA_DRIVER_NAME="$LIBVA_DRIVER_NAME" \
     MESA_LOADER_DRIVER_OVERRIDE="$MESA_LOADER_DRIVER_OVERRIDE" \
