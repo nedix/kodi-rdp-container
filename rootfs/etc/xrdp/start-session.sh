@@ -23,7 +23,7 @@ touch ~/.Xauthority
 #
 #/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
 
-/usr/bin/kodi --standalone --windowing=x11 --gl-interface=egl
+/usr/bin/kodi --standalone --windowing=x11 --gl-interface=glx
 
 cat /home/kodi/.kodi/temp/kodi.log
 cat /home/kodi/.xorgxrdp.1.log
