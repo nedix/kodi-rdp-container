@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 : ${EGL_PLATFORM:="x11"}
-: ${GALLIUM_DRIVER}
+: ${GALLIUM_DRIVER:="zink"}
 : ${LIBGL_KOPPER_DRI2:="1"}
 : ${LIBVA_DRIVER_NAME:="vdpau"}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}

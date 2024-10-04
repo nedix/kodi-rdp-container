@@ -215,9 +215,9 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VER
         --sysconfdir=/etc \
         --enable-glamor \
     && make -j $(( $(nproc) + 1 )) \
-    && make DESTDIR="${PWD}/output" install \
-    && sed -E \
-        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
+    && make DESTDIR="${PWD}/output" install
+
+RUN sed -E \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
         -e "s|Option \"DRI3\" \"1\"|Option \"DRI2\" \"1\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
