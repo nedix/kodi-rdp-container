@@ -174,7 +174,6 @@ RUN git init "$PWD" \
         --prefix=/usr \
         --sbindir=/usr/sbin \
         --sysconfdir=/etc \
-        --enable-glamor \
         --enable-ipv6 \
         --enable-mp3lame \
         --enable-pam \
@@ -216,7 +215,6 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERS
         --mandir=/usr/share/man \
         --prefix=/usr \
         --sysconfdir=/etc \
-        --enable-glamor \
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR="${PWD}/output" install
 
