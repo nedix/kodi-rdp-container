@@ -11,6 +11,7 @@
 : ${VDPAU_QUIRKS:="AvoidVA,XCloseDisplay"}
 : ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
 : ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
+: ${__GL_SYNC_TO_VBLANK:="0"}
 
 groupadd pulse-access
 
@@ -31,7 +32,7 @@ echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
-    GLAMOR_DEBUG="true" \
+    GLAMOR_DEBUG="all" \
     LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:/usr/lib64:/usr/lib" \
     LIBGL_DEBUG="verbose" \
     LIBGL_KOPPER_DRI2="$LIBGL_KOPPER_DRI2" \
@@ -49,4 +50,5 @@ exec env -i \
     XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
     __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
+    __GL_SYNC_TO_VBLANK="$__GL_SYNC_TO_VBLANK" \
     /init
