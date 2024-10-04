@@ -11,6 +11,10 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
 /usr/bin/env
 
+touch ~/.Xauthority
+
+/usr/bin/xauth add "$DISPLAY" . $(xxd -l 16 -p /dev/urandom)
+
 /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
 
 #/usr/bin/vglrun +glx /usr/bin/glxinfo -B
@@ -19,7 +23,7 @@ export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 #
 #/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
 
-#/usr/bin/kodi --standalone --windowing=x11 --gl-interface=egl
+/usr/bin/kodi --standalone --windowing=x11 --gl-interface=egl
 
-#cat /home/kodi/.kodi/temp/kodi.log
-#cat /home/kodi/.xorgxrdp.1.log
+cat /home/kodi/.kodi/temp/kodi.log
+cat /home/kodi/.xorgxrdp.1.log
