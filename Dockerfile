@@ -5,7 +5,7 @@ ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
-ARG XORGXRDP_VERSION=0.10.2
+ARG XORGXRDP_VERSION=5af24ba7626700f7f70c239dce8aced9d8cef272
 ARG XORG_SERVER_VERSION=21.1.13
 ARG XRDP_VERSION=0579980e449f997df569af65dcfd5ff6ac876fce
 
@@ -153,8 +153,7 @@ RUN dnf install -y \
         turbojpeg-devel \
         yasm-devel
 
-RUN dnf install -y \
-        x264-devel
+RUN dnf install -y x264-devel
 
 WORKDIR /build/xrdp
 
@@ -204,7 +203,7 @@ WORKDIR /build/xorgxrdp
 
 ARG XORGXRDP_VERSION
 
-RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
+RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERSION}" \
     | tar -xpzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
