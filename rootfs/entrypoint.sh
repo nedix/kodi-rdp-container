@@ -3,11 +3,11 @@
 : ${EGL_PLATFORM:="x11"}
 : ${GALLIUM_DRIVER}
 : ${LIBGL_KOPPER_DRI2:="1"}
-: ${LIBVA_DRIVER_NAME:="vdpau"}
+: ${LIBVA_DRIVER_NAME}
 : ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
-: ${VDPAU_DRIVER:="va_gl"}
+: ${VDPAU_DRIVER}
 : ${VDPAU_QUIRKS:="AvoidVA,XCloseDisplay"}
 : ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
 : ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
