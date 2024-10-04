@@ -84,7 +84,6 @@ RUN dnf install -y \
         libgudev-devel \
         libxcvt-devel \
         libxkbfile-devel \
-        libxshmfence-devel \
         mesa-libEGL-devel \
         mesa-libGL-devel \
         mesa-libgbm-devel \
