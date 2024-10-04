@@ -12,6 +12,5 @@ if ls /dev/dri | grep -E "renderD[0-9]+" &> /dev/null; then
         -e "s|(GPUDevice \"\")|#\1|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm zink mesa\"|" \
         -e "s|(Option \"DRMDevice\").*$|\1 \"/dev/dri/${GPU}\"|" \
-        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -i /etc/X11/xrdp/xorg.conf
 fi

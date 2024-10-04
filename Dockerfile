@@ -221,6 +221,10 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERS
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR="${PWD}/output" install
 
+RUN sed -E \
+        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
+        -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
+
 FROM build-base AS pulseaudio
 
 RUN dnf install -y \
