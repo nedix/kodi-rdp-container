@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-: ${DISPLAY:=":0.0"}
+: ${DISPLAY}
 : ${EGL_PLATFORM:="x11"}
 : ${GALLIUM_DRIVER}
 : ${LIBGL_KOPPER_DRI2:="1"}
