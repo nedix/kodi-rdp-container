@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-: ${DISPLAY}
 : ${EGL_PLATFORM:="x11"}
 : ${GALLIUM_DRIVER}
 : ${LIBGL_KOPPER_DRI2:="1"}
@@ -31,7 +30,6 @@ echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 exec env -i \
-    DISPLAY="$DISPLAY" \
     EGL_PLATFORM="$EGL_PLATFORM" \
     GALLIUM_DRIVER="$GALLIUM_DRIVER" \
     GLAMOR_DEBUG="all" \
