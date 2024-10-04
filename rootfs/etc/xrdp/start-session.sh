@@ -19,8 +19,7 @@ set -x
 #
 #/usr/bin/vglrun +glx /usr/bin/vulkaninfo --summary
 
-cat /home/kodi/.xorgxrdp.1.log
-
 /usr/bin/kodi --standalone --windowing=x11 --gl-interface=egl
 
 cat /home/kodi/.kodi/temp/kodi.log
+cat /home/kodi/.xorgxrdp.1.log
