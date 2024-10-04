@@ -108,10 +108,10 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Ddpms=true \
         -Ddri1=false \
         -Ddri2=true \
-        -Ddri3=false \
+        -Ddri3=true \
         -Dfallback_input_driver=libinput \
         -Dglamor=true \
-        -Dglx=false \
+        -Dglx=true \
         -Dhal=false \
         -Dipv6=true \
         -Dlisten_local=true \
