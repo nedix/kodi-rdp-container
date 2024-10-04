@@ -370,7 +370,7 @@ RUN ldconfig
 
 COPY /rootfs/ /
 
-ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
 
 ENTRYPOINT ["/entrypoint.sh"]
 
