@@ -1,5 +1,5 @@
 [codec]
-order = ["RFX", "H.264"]
+order = ["H.264", "RFX"]
 
 [x264.default]
 preset = "ultrafast"
