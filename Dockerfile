@@ -5,9 +5,9 @@ ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
-ARG XORGXRDP_VERSION=eff2ce6f5f8a86735381df238648bda614d49fd2
+ARG XORGXRDP_VERSION=a54a343aa29f462ae4d5c286027713c4b3e83ffa
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=65993312b78b4014f5dd38e694d958bf24393ae2
+ARG XRDP_VERSION=a3b416487690f309f98b8d445f92f11e90b14885
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
@@ -161,7 +161,7 @@ WORKDIR /build/xrdp
 ARG XRDP_VERSION
 
 RUN git init "$PWD" \
-    && git remote add origin https://github.com/neutrinolabs/xrdp.git \
+    && git remote add origin https://github.com/nedix/xrdp-fork.git \
     && git fetch origin --no-tags \
     && git checkout "${XRDP_VERSION}" \
     && git submodule update --init --recursive --depth=1 \
@@ -205,7 +205,7 @@ WORKDIR /build/xorgxrdp
 
 ARG XORGXRDP_VERSION
 
-RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERSION}" \
+RUN curl -fsSL "https://github.com/nedix/xorgxrdp-fork/tarball/${XORGXRDP_VERSION}" \
     | tar -xpzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
