@@ -1,0 +1,7 @@
+[codec]
+order = ["RFX", "H.264"]
+
+[x264.default]
+preset = "ultrafast"
+tune = "zerolatency"
+profile = "main"

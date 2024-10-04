@@ -7,7 +7,7 @@ ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
 ARG XORGXRDP_VERSION=0.10.2
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=0.10.1
+ARG XRDP_VERSION=0579980e449f997df569af65dcfd5ff6ac876fce
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
@@ -138,6 +138,8 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
 
 FROM build-base AS xrdp
 
+COPY --link --from=xorg-server /build/xorg-server/output/ /
+
 RUN dnf install -y \
         lame-devel \
         libX11-devel \
@@ -151,7 +153,8 @@ RUN dnf install -y \
         turbojpeg-devel \
         yasm-devel
 
-COPY --link --from=xorg-server /build/xorg-server/output/ /
+RUN dnf install -y \
+        x264-devel
 
 WORKDIR /build/xrdp
 
@@ -159,8 +162,8 @@ ARG XRDP_VERSION
 
 RUN git init "$PWD" \
     && git remote add origin https://github.com/neutrinolabs/xrdp.git \
-    && git fetch origin tag "v${XRDP_VERSION}" --no-tags \
-    && git checkout "tags/v${XRDP_VERSION}" \
+    && git fetch origin --no-tags \
+    && git checkout "${XRDP_VERSION}" \
     && git submodule update --init --recursive --depth=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
@@ -180,6 +183,7 @@ RUN git init "$PWD" \
         --enable-rfxcodec \
         --enable-tjpeg \
         --enable-vsock \
+        --enable-x264 \
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR="${PWD}/output" install
 
