@@ -111,7 +111,6 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Ddri2=true \
         -Ddri3=true \
         -Dfallback_input_driver=libinput \
-        -Dglamor=true \
         -Dglx=true \
         -Dhal=false \
         -Dipv6=true \
@@ -219,7 +218,6 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERS
     && make DESTDIR="${PWD}/output" install
 
 RUN sed -E \
-        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
