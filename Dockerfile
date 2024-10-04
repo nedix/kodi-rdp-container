@@ -175,6 +175,7 @@ RUN git init "$PWD" \
         --prefix=/usr \
         --sbindir=/usr/sbin \
         --sysconfdir=/etc \
+        --enable-all-debug \
         --enable-glamor \
         --enable-ipv6 \
         --enable-mp3lame \
@@ -209,6 +210,9 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERS
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xorgxrdp/module/rdpClientCon.c \
+    && sed -E \
+        -e "s|const int vfreq = 50;|const int vfreq = 60;|" \
+        -i /build/xorgxrdp/module/rdpRandR.c \
     && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
