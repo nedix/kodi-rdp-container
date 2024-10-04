@@ -218,8 +218,8 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VER
     && make DESTDIR="${PWD}/output" install
 
 RUN sed -E \
+        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm v3d\"|" \
-        -e "s|Option \"DRI3\" \"1\"|Option \"DRI2\" \"1\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
