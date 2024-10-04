@@ -10,7 +10,6 @@
 : ${VDPAU_DRIVER:="va_gl"}
 : ${VDPAU_QUIRKS:="AvoidVA,XCloseDisplay"}
 : ${VGL_GLLIB:="/usr/lib64/libGL.so.1"}
-: ${__GLX_VENDOR_LIBRARY_NAME:="mesa"}
 
 groupadd pulse-access
 
@@ -48,5 +47,4 @@ exec env -i \
     VK_LAYER_PATH="$VK_LAYER_PATH" \
     XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)" \
     XDG_SESSION_TYPE="x11" \
-    __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     /init

@@ -107,12 +107,12 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Db_ndebug=true \
         -Ddefault_font_path="catalogue:/etc/X11/fontpath.d,built-ins" \
         -Ddpms=true \
-        -Ddri1=true \
+        -Ddri1=false \
         -Ddri2=true \
-        -Ddri3=true \
+        -Ddri3=false \
         -Dfallback_input_driver=libinput \
         -Dglamor=true \
-        -Dglx=true \
+        -Dglx=false \
         -Dhal=false \
         -Dipv6=true \
         -Dlisten_local=true \
