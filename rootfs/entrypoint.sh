@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
 : ${EGL_PLATFORM:="x11"}
-: ${GALLIUM_DRIVER:="zink"}
+: ${GALLIUM_DRIVER}
 : ${LIBGL_KOPPER_DRI2:="1"}
 : ${LIBVA_DRIVER_NAME:="vdpau"}
-: ${MESA_LOADER_DRIVER_OVERRIDE:="zink"}
+: ${MESA_LOADER_DRIVER_OVERRIDE}
 : ${NOUVEAU_USE_ZINK}
 : ${PASSWORD_HASH}
 : ${VDPAU_DRIVER:="va_gl"}
