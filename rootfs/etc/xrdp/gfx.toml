@@ -10,6 +10,8 @@ vbv_buffer_size = 0
 fps_num = 24
 fps_den = 1
 
+[x264.lan]
+
 [x264.wan]
 vbv_max_bitrate = 15000
 vbv_buffer_size = 1500

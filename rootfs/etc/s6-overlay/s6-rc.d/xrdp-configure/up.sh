@@ -13,4 +13,6 @@ if ls /dev/dri | grep -E "renderD[0-9]+" &> /dev/null; then
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia nvidia-drm amdgpu i915 radeon msm zink mesa\"|" \
         -e "s|(Option \"DRMDevice\").*$|\1 \"/dev/dri/${GPU}\"|" \
         -i /etc/X11/xrdp/xorg.conf
+else
+    /command/s6-svc -u /run/service/xvfb-daemon
 fi
