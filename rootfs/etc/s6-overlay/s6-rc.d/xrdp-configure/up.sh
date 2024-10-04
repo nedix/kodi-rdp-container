@@ -2,11 +2,11 @@
 
 mkdir -p /var/xrdp/certs
 
-if ! openssl x509 -in /var/xrdp/certs/cert.pem -noout; then
+if ! openssl x509 -in /var/xrdp/certs/cert.pem -noout > /dev/null; then
     openssl req -x509 -newkey rsa:2048 -nodes -keyout /var/xrdp/certs/key.pem -out /var/xrdp/certs/cert.pem -subj / -days 365
 fi
 
-if ls /dev/dri | grep -E "renderD[0-9]+" &> /dev/null; then
+if ls /dev/dri 2> /dev/null | grep -qE "renderD[0-9]+"; then
     GPU="$(ls /dev/dri | grep -E "renderD[0-9]+" | head -n 1)"
     sed -E \
         -e "s|(GPUDevice \"\")|#\1|" \
