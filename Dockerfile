@@ -5,9 +5,9 @@ ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
-ARG XORGXRDP_VERSION=5af24ba7626700f7f70c239dce8aced9d8cef272
+ARG XORGXRDP_VERSION=eff2ce6f5f8a86735381df238648bda614d49fd2
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=0579980e449f997df569af65dcfd5ff6ac876fce
+ARG XRDP_VERSION=65993312b78b4014f5dd38e694d958bf24393ae2
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
@@ -111,6 +111,7 @@ RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-serve
         -Ddri2=true \
         -Ddri3=true \
         -Dfallback_input_driver=libinput \
+        -Dglamor=true \
         -Dglx=true \
         -Dhal=false \
         -Dipv6=true \
@@ -153,6 +154,7 @@ RUN dnf install -y \
         yasm-devel
 
 RUN dnf install -y x264-devel
+RUN dnf install -y libxkbfile-devel
 
 WORKDIR /build/xrdp
 
@@ -173,6 +175,7 @@ RUN git init "$PWD" \
         --prefix=/usr \
         --sbindir=/usr/sbin \
         --sysconfdir=/etc \
+        --enable-glamor \
         --enable-ipv6 \
         --enable-mp3lame \
         --enable-pam \
@@ -214,10 +217,12 @@ RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/${XORGXRDP_VERS
         --mandir=/usr/share/man \
         --prefix=/usr \
         --sysconfdir=/etc \
+        --enable-glamor \
     && make -j $(( $(nproc) + 1 )) \
     && make DESTDIR="${PWD}/output" install
 
 RUN sed -E \
+        -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
         -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
