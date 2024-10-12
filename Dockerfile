@@ -1,127 +1,168 @@
-ARG ALPINE_VERSION=3.20
-ARG ARCHITECTURE
-ARG GLIBC_VERSION=2.35-r1
-ARG LIBGLVND_VERSION=1.7.0
-ARG MESA_VERSION=24.1.7
+ARG FEDORA_VERSION=42
+ARG HARE_VERSION=0.24.2
+ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
+ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
-ARG SEATD_VERSION=0.8.0
-ARG XORGXRDP_VERSION=0.10.2
+ARG S6_OVERLAY_VERSION=3.2.0.0
+ARG XORGXRDP_VERSION=fb49d67b6c94217cb64020986c983abe52ce06f2
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=0.10.1
+ARG XRDP_VERSION=1c33f3d9af22cac303803a4132a6b1aea5ebf1ce
 
-FROM alpine:${ALPINE_VERSION} AS build-base
+FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
-# seatd
-RUN apk add \
-        g++ \
-        meson \
-        scdoc \
-        elogind-dev \
-        linux-headers \
-        samurai
+ARG BUILD_DEPS=" \
+    tar \
+    xz \
+"
 
-# xorg-server, xrdp, xorgxrdp, pulseaudio, pulseaudio-module-xrdp
-RUN apk add \
-        autoconf \
+ARG BUILDARCH
+ARG FEDORA_VERSION
+ARG S6_OVERLAY_VERSION
+
+RUN sed -E \
+        -e "s|(\[main\])|\1\ndeltarpm=1|" \
+        -e "s|(\[main\])|\1\nfastestmirror=1|" \
+        -e "s|(\[main\])|\1\ninstall_weak_deps=0|" \
+        -e "s|(\[main\])|\1\nmax_parallel_downloads=10|" \
+        -e "s|(\[main\])|\1\nmetadata_expire=-1|" \
+        -i /etc/dnf/dnf.conf \
+    && dnf install -y \
+        dnf5-plugins \
+        "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm" \
+        $BUILD_DEPS \
+    && for PREVIOUS_FEDORA_VERSION in $(seq $(( FEDORA_VERSION - 2 )) "$FEDORA_VERSION"); do \
+        sed -E \
+            -e "s|\\\$releasever|${PREVIOUS_FEDORA_VERSION}|g" \
+            -e "s|^\[fedora|\[fedora-${PREVIOUS_FEDORA_VERSION}|g" \
+            /etc/yum.repos.d/fedora.repo \
+            > "/etc/yum.repos.d/fedora-${PREVIOUS_FEDORA_VERSION}.repo" \
+        && dnf config-manager setopt "fedora-${PREVIOUS_FEDORA_VERSION}.enabled=1" \
+        && sed -E \
+            -e "s|\\\$releasever|${PREVIOUS_FEDORA_VERSION}|g" \
+            -e "s|^\[updates|\[fedora-${PREVIOUS_FEDORA_VERSION}-updates|g" \
+            /etc/yum.repos.d/fedora-updates.repo \
+            > "/etc/yum.repos.d/fedora-${PREVIOUS_FEDORA_VERSION}-updates.repo" \
+        && dnf config-manager setopt "fedora-${PREVIOUS_FEDORA_VERSION}-updates.enabled=1" \
+        && sed -E \
+            -e "s|\\\$releasever|${PREVIOUS_FEDORA_VERSION}|g" \
+            -e "s|^\[rpmfusion-free|\[fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free|g" \
+            /etc/yum.repos.d/rpmfusion-free.repo \
+            > "/etc/yum.repos.d/fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free.repo" \
+        && dnf config-manager setopt "fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free.enabled=1" \
+        && sed -E \
+            -e "s|\\\$releasever|${PREVIOUS_FEDORA_VERSION}|g" \
+            -e "s|^\[rpmfusion-free-updates|\[fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free-updates|g" \
+            /etc/yum.repos.d/rpmfusion-free-updates.repo \
+            > "/etc/yum.repos.d/fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free-updates.repo" \
+        && dnf config-manager setopt "fedora-${PREVIOUS_FEDORA_VERSION}-rpmfusion-free-updates.enabled=1" \
+    ; done \
+    && dnf config-manager setopt "fedora-cisco-openh264.enabled=0" \
+    && dnf config-manager setopt "fedora.enabled=0" \
+    && dnf config-manager setopt "updates.enabled=0" \
+    && dnf config-manager setopt "updates-testing.enabled=0" \
+    && dnf config-manager setopt "rpmfusion-free.enabled=0" \
+    && dnf config-manager setopt "rpmfusion-free-updates.enabled=0" \
+    && dnf config-manager setopt "rpmfusion-free-updates-testing.enabled=0" \
+    && rm \
+        /etc/yum.repos.d/fedora-cisco-openh264.repo \
+        /etc/yum.repos.d/fedora.repo \
+        /etc/yum.repos.d/fedora-updates.repo \
+        /etc/yum.repos.d/fedora-updates-testing.repo \
+        /etc/yum.repos.d/rpmfusion-free.repo \
+        /etc/yum.repos.d/rpmfusion-free-updates.repo \
+        /etc/yum.repos.d/rpmfusion-free-updates-testing.repo \
+    && dnf makecache --refresh
+
+RUN case "$BUILDARCH" in \
+        aarch64) \
+            S6_OVERLAY_ARCHITECTURE="aarch64" \
+        ;; amd64) \
+            S6_OVERLAY_ARCHITECTURE="x86_64" \
+        ;; arm64) \
+            S6_OVERLAY_ARCHITECTURE="aarch64" \
+        ;; armv8b) \
+            S6_OVERLAY_ARCHITECTURE="aarch64" \
+        ;; armv8l) \
+            S6_OVERLAY_ARCHITECTURE="aarch64" \
+        ;; x86_64) \
+            S6_OVERLAY_ARCHITECTURE="x86_64" \
+        ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
+    esac \
+    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    | tar -xpJf- -C / \
+    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz" \
+    | tar -xpJf- -C /
+
+RUN dnf remove -y $BUILD_DEPS
+
+FROM base AS build-base
+
+RUN dnf install -y \
         automake \
-        check-dev \
-        cmocka-dev \
+        bison \
+        cmake \
+        cpio \
         doxygen \
-        eudev-dev \
-        fdk-aac-dev \
-        fuse-dev \
+        flex \
         g++ \
-        git \
-        lame-dev \
-        libdrm-dev \
-        libepoxy-dev \
-        libice-dev \
-        libjpeg-turbo-dev \
-        libpciaccess-dev \
-        libsm-dev \
-        libsndfile-dev \
-        libtool \
-        libx11-dev \
-        libxau-dev \
-        libxcb-dev \
-        libxcvt-dev \
-        libxdmcp-dev \
-        libxext-dev \
-        libxfixes-dev \
-        libxfont2-dev \
-        libxkbfile-dev \
-        libxrandr-dev \
-        libxshmfence-dev \
-        libxtst-dev \
-        linux-headers \
-        linux-pam-dev \
-        make \
-        mesa-dev \
-        meson \
-        nasm \
-        nettle-dev \
-        openssl-dev \
-        opus-dev \
-        perl-xml-parser \
-        pixman-dev \
-        pkgconf \
-        samurai \
-        tdb-dev \
-        xcb-util-dev \
-        xcb-util-image-dev \
-        xcb-util-keysyms-dev \
-        xcb-util-renderutil-dev \
-        xcb-util-wm-dev \
-        xkbcomp-dev \
-        xorg-server-dev \
-        xorgproto \
-        xtrans
-
-# libglvnd
-RUN apk add \
+        gawk \
         gcc \
-        libx11-dev \
-        libxext-dev \
+        git \
+        intltool \
+        kernel-headers \
+        koji \
+        libtool \
+        libtool-ltdl-devel \
+        m4 \
+        make \
         meson \
-        musl-dev \
-        samurai
-
-FROM build-base AS seatd
-
-WORKDIR /build/seatd
-
-ARG SEATD_VERSION
-
-RUN wget -qO- "https://github.com/kennylevinsen/seatd/tarball/${SEATD_VERSION}" \
-    | tar -xzf - --strip-components=1 \
-    && export CFLAGS="-O2 -g1 -Wno-error=unused-parameter" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
-    && meson setup build \
-        --prefix=/usr \
-        -Db_lto=true \
-        -Db_ndebug=true \
-        -Dlibseat-logind=elogind \
-        -Dlibseat-builtin=enabled \
-    && DESTDIR=/build/seatd/output ninja -C build install
+        pkgconfig \
+        rpm2cpio \
+        samurai \
+        tar \
+        xmltoman
 
 FROM build-base AS xorg-server
+
+RUN dnf install -y \
+        libXfont2-devel \
+        libXi-devel \
+        libXinerama-devel \
+        libXres-devel \
+        libXv-devel \
+        libdrm-devel \
+        libepoxy-devel \
+        libgudev-devel \
+        libxcvt-devel \
+        libxkbfile-devel \
+        libxshmfence-devel \
+        mesa-libEGL-devel \
+        mesa-libGL-devel \
+        mesa-libgbm-devel \
+        openssl-devel \
+        pixman-devel \
+        systemtap-sdt-devel \
+        xorg-x11-util-macros \
+        xorg-x11-xtrans-devel
 
 WORKDIR /build/xorg-server
 
 ARG XORG_SERVER_VERSION
 
-RUN wget -qO- "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server-${XORG_SERVER_VERSION}/xserver-xorg-server-${XORG_SERVER_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
-    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+RUN curl -fsSL "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server-${XORG_SERVER_VERSION}/xserver-xorg-server-${XORG_SERVER_VERSION}.tar.gz" \
+    | tar -xpzf- --strip-components=1 \
+    && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build \
         --prefix=/usr \
         -Db_lto=true \
         -Db_ndebug=true \
-        -Ddefault_font_path=/usr/share/fonts/misc,/usr/share/fonts/100dpi:unscaled,/usr/share/fonts/75dpi:unscaled,/usr/share/fonts/TTF,/usr/share/fonts/Type1 \
+        -Ddefault_font_path="catalogue:/etc/X11/fontpath.d,built-ins" \
         -Ddpms=true \
-        -Ddri1=true \
+        -Ddri1=false \
         -Ddri2=true \
         -Ddri3=true \
+        -Dfallback_input_driver=libinput \
         -Dglamor=true \
         -Dglx=true \
         -Dhal=false \
@@ -129,6 +170,7 @@ RUN wget -qO- "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server
         -Dlisten_local=true \
         -Dlisten_tcp=false \
         -Dlisten_unix=true \
+        -Dmodule_dir=/usr/lib64/xorg/modules \
         -Dpciaccess=true \
         -Dsecure-rpc=false \
         -Dsuid_wrapper=true \
@@ -144,9 +186,27 @@ RUN wget -qO- "https://gitlab.freedesktop.org/xorg/xserver/-/archive/xorg-server
         -Dxorg=true \
         -Dxvfb=true \
         -Dxwin=false \
-    && DESTDIR=/build/xorg-server/output ninja -C build install
+    && DESTDIR="${PWD}/output" ninja -C build install
 
 FROM build-base AS xrdp
+
+RUN dnf install -y \
+        lame-devel \
+        libX11-devel \
+        libXfixes-devel \
+        libXrandr-devel \
+        libdrm-devel \
+        libepoxy-devel \
+        nasm \
+        openssl-devel \
+        pam-devel \
+        pixman-devel \
+        turbojpeg-devel \
+        yasm-devel
+
+RUN dnf install -y x264-devel
+RUN dnf install -y libxkbfile-devel
+RUN dnf install -y clang-analyzer
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 
@@ -155,33 +215,41 @@ WORKDIR /build/xrdp
 ARG XRDP_VERSION
 
 RUN git init "$PWD" \
-    && git remote add -f origin -t \* https://github.com/neutrinolabs/xrdp.git \
-    && git checkout "tags/v${XRDP_VERSION}" \
-    && git submodule update --init --recursive \
+    && git remote add origin https://github.com/nedix/xrdp-fork.git \
+    && git fetch origin "$XRDP_VERSION" --no-tags \
+    && git checkout -b main "$XRDP_VERSION" \
+    && git submodule update --init --recursive --depth=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
-        -i /build/xrdp/xrdp/xrdp_mm.c \
-    && export CFLAGS="-O2 -g1 -Wno-error=cpp" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+        -i /build/xrdp/xrdp/xrdp_mm.c
+
+RUN export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
         --localstatedir=/var \
         --prefix=/usr \
         --sbindir=/usr/sbin \
         --sysconfdir=/etc \
-        --enable-fdkaac \
         --enable-glamor \
         --enable-ipv6 \
         --enable-mp3lame \
-        --enable-opus \
         --enable-pam \
         --enable-pixman \
         --enable-rfxcodec \
         --enable-tjpeg \
         --enable-vsock \
     && make -j $(( $(nproc) + 1 )) \
-    && make DESTDIR=/build/xrdp/output install
+    && make DESTDIR="${PWD}/output" install
 
 FROM build-base AS xorgxrdp
+
+RUN dnf install -y \
+        libdrm-devel \
+        libepoxy-devel \
+        mesa-libgbm-devel \
+        nasm \
+        xorg-x11-server-devel \
+        yasm-devel
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -190,44 +258,66 @@ WORKDIR /build/xorgxrdp
 
 ARG XORGXRDP_VERSION
 
-RUN wget -qO- "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+RUN curl -fsSL "https://github.com/nedix/xorgxrdp-fork/tarball/${XORGXRDP_VERSION}" \
+    | tar -xpzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
         -i /build/xorgxrdp/module/rdpClientCon.c \
-    && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+    && sed -E \
+        -e "s|const int vfreq = 50;|const int vfreq = 60;|" \
+        -i /build/xorgxrdp/module/rdpRandR.c \
+    && export CFLAGS="-O2 -g1 $(pkg-config --cflags libdrm)" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
-        --libdir=/usr/lib/xorg/modules \
+        --libdir=/usr/lib64/xorg/modules \
         --localstatedir=/var \
         --mandir=/usr/share/man \
         --prefix=/usr \
         --sysconfdir=/etc \
         --enable-glamor \
     && make -j $(( $(nproc) + 1 )) \
-    && make DESTDIR=/build/xorgxrdp/output install \
+    && make DESTDIR="${PWD}/output" install \
     && sed -E \
         -e "s|^(Section \"Module\")$|\1\n    Load \"glamoregl\"|" \
-        -e "s|(Option \"DRMAllowList\").*$|\1 \"nvidia amdgpu i915 radeon msm vc4 v3d\"|" \
         -i /build/xorgxrdp/output/etc/X11/xrdp/xorg.conf
 
 FROM build-base AS pulseaudio
+
+RUN dnf install -y \
+        avahi-devel \
+        dbus-devel \
+        check-devel \
+        glib2-devel \
+        libICE-devel \
+        libSM-devel \
+        libX11-devel \
+        libXi-devel \
+        libXt-devel \
+        libXtst-devel \
+        libasyncns-devel \
+        libatomic_ops-devel \
+        libatomic_ops-static \
+        libcap-devel \
+        libsndfile-devel \
+        libtdb-devel \
+        openssl-devel \
+        orc-devel \
+        sbc-devel \
+        xcb-util-devel \
+        xorg-x11-proto-devel
 
 WORKDIR /build/pulseaudio
 
 ARG PULSEAUDIO_VERSION
 
-RUN wget -qO- "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-${PULSEAUDIO_VERSION}.tar.gz" \
-    | tar -xzf - --strip-components=1 \
-    && sed -E \
-        -e "s|libintl_dep = .*|libintl_dep = cc.find_library('intl')|" \
-        -i meson.build \
-    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
+RUN curl -fsSL "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-${PULSEAUDIO_VERSION}.tar.gz" \
+    | tar -xpzf- --strip-components=1 \
+    && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build  \
         --prefix=/usr \
         -Db_lto=true \
         -Db_ndebug=true \
-    && DESTDIR=/build/pulseaudio/output ninja -C build install
+    && DESTDIR="${PWD}/output" ninja -C build install
 
 FROM build-base AS pulseaudio-module-xrdp
 
@@ -239,124 +329,100 @@ WORKDIR /build/pulseaudio-module-xrdp
 
 ARG PULSEAUDIO_MODULE_XRDP_VERSION
 
-RUN wget -qO- "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v${PULSEAUDIO_MODULE_XRDP_VERSION}" \
-    | tar -xzf - --strip-components=1 \
+RUN curl -fsSL "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v${PULSEAUDIO_MODULE_XRDP_VERSION}" \
+    | tar -xpzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
     && ./bootstrap \
     && ./configure \
         PULSE_DIR=/build/pulseaudio \
-        --libdir=/usr/lib/xorg/modules \
+        --libdir=/usr/lib64/xorg/modules \
         --localstatedir=/var \
         --mandir=/usr/share/man \
         --prefix=/usr \
         --sysconfdir=/etc \
     && make -j $(( $(nproc) + 1 )) \
-    && make DESTDIR=/build/pulseaudio-module-xrdp/output install
+    && make DESTDIR="${PWD}/output" install
 
-FROM build-base AS libglvnd
+FROM build-base AS mkrundir
 
-WORKDIR /build/libglvnd
+RUN dnf install -y \
+        harec \
+        scdoc
 
-ARG LIBGLVND_VERSION
+ARG BUILDARCH
+ARG HARE_VERSION
 
-RUN wget -qO- "https://github.com/NVIDIA/libglvnd/tarball/v${LIBGLVND_VERSION}" \
-    | tar -xzf - --strip-components=1 \
-    && export CFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" \
-    && meson build \
-        --prefix=/usr \
-        -Db_lto=true \
-        -Db_ndebug=true \
-    && DESTDIR=/build/libglvnd/output ninja -C build install
+WORKDIR /build/hare
 
-FROM alpine:${ALPINE_VERSION}
+RUN case "$BUILDARCH" in \
+    aarch64) \
+        HARE_ARCHITECTURE="aarch64" \
+    ;; amd64) \
+        HARE_ARCHITECTURE="x86_64" \
+    ;; arm64) \
+        HARE_ARCHITECTURE="aarch64" \
+    ;; armv8b) \
+        HARE_ARCHITECTURE="aarch64" \
+    ;; armv8l) \
+        HARE_ARCHITECTURE="aarch64" \
+    ;; x86_64) \
+        HARE_ARCHITECTURE="x86_64" \
+    ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
+    esac \
+    && curl -fsSL "https://git.sr.ht/~sircmpwn/hare/archive/${HARE_VERSION}.tar.gz" \
+    | tar -xpzf- --strip-components=1 \
+    && cp configs/linux.mk config.mk \
+    && make ARCH="$HARE_ARCHITECTURE" -j $(( $(nproc) + 1 )) \
+    && make install
 
-COPY --link --from=libglvnd /build/libglvnd/output/ /
+WORKDIR /build/mkrundir
 
-ARG GLIBC_VERSION
+ARG MKRUNDIR_VERSION
 
-RUN wget -q https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -O /etc/apk/keys/sgerrand.rsa.pub \
-    && wget "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" \
-    && apk add "glibc-${GLIBC_VERSION}.apk" \
-    && rm "glibc-${GLIBC_VERSION}.apk"
+RUN curl -fsSL "https://git.sr.ht/~whynothugo/mkrundir/archive/v${MKRUNDIR_VERSION}.tar.gz" \
+    | tar -xpzf- --strip-components=1 \
+    && make -j $(( $(nproc) + 1 )) all \
+    && make DESTDIR="${PWD}/output" install
 
-RUN apk add \
-        colord \
+FROM base
+
+RUN dnf install -y \
+        dbus-daemon \
         dbus-x11 \
-        fdk-aac \
-        fuse \
-        gsm \
-        krb5 \
-        lame-libs \
-        libcrypto3 \
-        libdrm \
-        libelogind \
+        libXfont2 \
         libepoxy \
-        libssl3 \
-        libturbojpeg \
-        libx11 \
-        libxcb \
         libxcvt \
-        libxdamage \
-        libxext \
-        libxfixes \
-        libxfont2 \
-        libxkbfile \
-        libxrandr \
-        libxtst \
-        libxv \
-        linux-pam \
-        llvm17-libs \
-        mesa-dri-gallium \
-        mesa-egl \
-        mesa-gl \
-        mesa-va-gallium \
-        mesa-vdpau-gallium \
         openssl \
-        opus \
+        orc \
         pixman \
-        vulkan-loader \
-        xauth \
-        xcalib \
-        xcb-util-keysyms \
+        seatd \
+        turbojpeg \
         xkbcomp \
-        xkeyboard-config \
-        xrandr \
-        xset
+        xorg-x11-xauth \
+        xset \
+        xxd
 
-RUN apk add \
-        x264-libs \
-        x265-libs \
-        xf86-video-amdgpu \
-        xf86-video-ati \
-        xf86-video-fbdev \
-        xf86-video-nouveau \
-        xf86-video-nv
+RUN dnf install -y openssh-server sudo
+RUN dnf install -y kodi kodi-inputstream-adaptive
 
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-    && echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-    && apk add \
-        s6-overlay
-
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && cat /etc/apk/repositories \
-    && apk add \
-        kodi-inputstream-adaptive \
-        kodi-x11 \
-        mkrundir \
-        skalibs-dev
-
-RUN rm -rf /var/cache/apk/*
-
-COPY --link --from=seatd /build/seatd/output/ /
-COPY --link --from=xorg-server /build/xorg-server/output/ /
-COPY --link --from=xrdp /build/xrdp/output/ /
-COPY --link --from=xorgxrdp /build/xorgxrdp/output/ /
-COPY --link --from=pulseaudio /build/pulseaudio/output/ /
-COPY --link --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --from=xorg-server /build/xorg-server/output/ /
+COPY --from=xrdp /build/xrdp/output/ /
+COPY --from=xorgxrdp /build/xorgxrdp/output/ /
+COPY --from=pulseaudio /build/pulseaudio/output/ /
+COPY --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
+COPY --from=mkrundir /build/mkrundir/output/ /
 
 COPY /rootfs/ /
 
+RUN dnf clean all \
+    && ldconfig
+
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
+
 ENTRYPOINT ["/entrypoint.sh"]
+
+# SSH
+EXPOSE 22
 
 # RDP
 EXPOSE 3389
