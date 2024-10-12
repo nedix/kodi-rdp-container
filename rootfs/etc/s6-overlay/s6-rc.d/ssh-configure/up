@@ -1,0 +1,3 @@
+#!/usr/bin/env execlineb
+
+foreground { /usr/bin/ssh-keygen -A }
