@@ -2,19 +2,15 @@
 
 set -x
 
-export LIBGL_DEBUG=verbose
-export LD_LIBRARY_PATH="/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+while IFS= read -r ENV_VAR; do
+    ENV_KEY="${ENV_VAR%%=*}"
+    test -z "${!ENV_KEY}" && export "$ENV_VAR"
+done < <(/command/s6-envdir /run/s6/container_environment /usr/bin/env)
 
-touch ~/.Xauthority
+export XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)"
 
-/usr/bin/xauth add "$DISPLAY" . $(xxd -l 16 -p /dev/urandom)
 
-/usr/bin/xcalib -d "$DISPLAY" /usr/share/color/icc/colord/sRGB.icc
 
-/usr/bin/pulseaudio --disallow-exit --disable-shm --exit-idle-time=-1 &
 
-sleep 1
+/usr/bin/kodi --windowing=x11 --gl-interface=egl
 
-/usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh
-
-exec /usr/bin/kodi --standalone
