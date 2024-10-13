@@ -11,14 +11,12 @@ ARG XRDP_VERSION=1c33f3d9af22cac303803a4132a6b1aea5ebf1ce
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
-ARG BUILD_DEPS=" \
+ARG BUILD_DEPENDENCIES=" \
     tar \
     xz \
 "
 
-ARG BUILDARCH
 ARG FEDORA_VERSION
-ARG S6_OVERLAY_VERSION
 
 RUN sed -E \
         -e "s|(\[main\])|\1\ndeltarpm=1|" \
@@ -30,7 +28,7 @@ RUN sed -E \
     && dnf install -y \
         dnf5-plugins \
         "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VERSION}.noarch.rpm" \
-        $BUILD_DEPS \
+        $BUILD_DEPENDENCIES \
     && for PREVIOUS_FEDORA_VERSION in $(seq $(( FEDORA_VERSION - 2 )) "$FEDORA_VERSION"); do \
         sed -E \
             -e "s|\\\$releasever|${PREVIOUS_FEDORA_VERSION}|g" \
@@ -74,27 +72,21 @@ RUN sed -E \
         /etc/yum.repos.d/rpmfusion-free-updates-testing.repo \
     && dnf makecache --refresh
 
-RUN case "$BUILDARCH" in \
-        aarch64) \
-            S6_OVERLAY_ARCHITECTURE="aarch64" \
-        ;; amd64) \
-            S6_OVERLAY_ARCHITECTURE="x86_64" \
-        ;; arm64) \
-            S6_OVERLAY_ARCHITECTURE="aarch64" \
-        ;; armv8b) \
-            S6_OVERLAY_ARCHITECTURE="aarch64" \
-        ;; armv8l) \
-            S6_OVERLAY_ARCHITECTURE="aarch64" \
+ARG S6_OVERLAY_VERSION
+
+RUN case "$(uname -m)" in \
+        aarch64|arm*) \
+            CPU_ARCHITECTURE="aarch64" \
         ;; x86_64) \
-            S6_OVERLAY_ARCHITECTURE="x86_64" \
-        ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
+            CPU_ARCHITECTURE="x86_64" \
+        ;; *) echo "Unsupported architecture: $(uname -m)"; exit 1; ;; \
     esac \
     && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
     | tar -xpJf- -C / \
-    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz" \
+    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${CPU_ARCHITECTURE}.tar.xz" \
     | tar -xpJf- -C /
 
-RUN dnf remove -y $BUILD_DEPS
+RUN dnf remove -y $BUILD_DEPENDENCIES
 
 FROM base AS build-base
 
@@ -349,30 +341,21 @@ RUN dnf install -y \
         harec \
         scdoc
 
-ARG BUILDARCH
 ARG HARE_VERSION
 
 WORKDIR /build/hare
 
-RUN case "$BUILDARCH" in \
-    aarch64) \
-        HARE_ARCHITECTURE="aarch64" \
-    ;; amd64) \
-        HARE_ARCHITECTURE="x86_64" \
-    ;; arm64) \
-        HARE_ARCHITECTURE="aarch64" \
-    ;; armv8b) \
-        HARE_ARCHITECTURE="aarch64" \
-    ;; armv8l) \
-        HARE_ARCHITECTURE="aarch64" \
-    ;; x86_64) \
-        HARE_ARCHITECTURE="x86_64" \
-    ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
+RUN case "$(uname -m)" in \
+        aarch64|arm*) \
+            CPU_ARCHITECTURE="aarch64" \
+        ;; x86_64) \
+            CPU_ARCHITECTURE="x86_64" \
+        ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
     esac \
     && curl -fsSL "https://git.sr.ht/~sircmpwn/hare/archive/${HARE_VERSION}.tar.gz" \
     | tar -xpzf- --strip-components=1 \
     && cp configs/linux.mk config.mk \
-    && make ARCH="$HARE_ARCHITECTURE" -j $(( $(nproc) + 1 )) \
+    && make ARCH="$CPU_ARCHITECTURE" -j $(( $(nproc) + 1 )) \
     && make install
 
 WORKDIR /build/mkrundir
