@@ -1,8 +1,6 @@
 {
-  extends: ["https://raw.githubusercontent.com/nedix/nedix/main/.github/renovate.json5"],
-  baseBranches: [
-    "main",
-    "/^release\\/.*/",
+  extends: [
+    "https://raw.githubusercontent.com/nedix/actions/main/renovate.json5",
   ],
   customManagers: [
     {
@@ -12,7 +10,5 @@
       datasourceTemplate: "docker",
       packageNameTemplate: "alpine",
     },
-  ],
-  packageRules: [
   ],
 }
