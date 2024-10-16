@@ -7,7 +7,7 @@ ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
 ARG XORGXRDP_VERSION=fb49d67b6c94217cb64020986c983abe52ce06f2
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=1c33f3d9af22cac303803a4132a6b1aea5ebf1ce
+ARG XRDP_VERSION=79c655d570b4f7232fbb1d1d80eeb2b39e01c2b0
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
@@ -350,7 +350,7 @@ RUN case "$(uname -m)" in \
             CPU_ARCHITECTURE="aarch64" \
         ;; x86_64) \
             CPU_ARCHITECTURE="x86_64" \
-        ;; *) echo "Unsupported architecture: ${BUILDARCH}"; exit 1; ;; \
+        ;; *) echo "Unsupported architecture: $(uname -m)"; exit 1; ;; \
     esac \
     && curl -fsSL "https://git.sr.ht/~sircmpwn/hare/archive/${HARE_VERSION}.tar.gz" \
     | tar -xpzf- --strip-components=1 \
@@ -387,6 +387,12 @@ RUN dnf install -y \
 
 RUN dnf install -y openssh-server sudo
 RUN dnf install -y kodi kodi-inputstream-adaptive
+RUN dnf install -y gdb strace top ps valgrind
+
+#RUN dnf install -y ffmpeg-libs x264-libs x265-libs
+#RUN dnf install -y VirtualGL
+#RUN dnf install -y egl-utils glx-utils vulkan-tools
+#RUN dnf install -y mesa-vulkan-drivers
 
 COPY --from=xorg-server /build/xorg-server/output/ /
 COPY --from=xrdp /build/xrdp/output/ /
