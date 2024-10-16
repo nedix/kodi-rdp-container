@@ -15,6 +15,6 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64/v8
           registry: docker.io
-          registry_path: nedix/kodi-rdp
+          registry_path: nedix/kodi
           registry_username: ${{ secrets.DOCKERHUB_USERNAME }}
           registry_password: ${{ secrets.DOCKERHUB_PAT }}
