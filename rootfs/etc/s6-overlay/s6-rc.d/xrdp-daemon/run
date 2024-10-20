@@ -1,5 +1,3 @@
-#!/usr/bin/env execlineb
+#!/usr/bin/env sh
 
-s6-envdir /run/s6/container_environment
-
-exec /usr/sbin/xrdp --nodaemon
+exec valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes /usr/sbin/xrdp --nodaemon

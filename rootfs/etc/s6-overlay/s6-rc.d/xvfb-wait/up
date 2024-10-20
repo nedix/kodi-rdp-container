@@ -1,3 +1,5 @@
-#!/usr/bin/env execlineb
+#!/usr/bin/env sh
 
-/etc/s6-overlay/s6-rc.d/xvfb-wait/up.sh
+until xset -q -display :0.0 &>/dev/null; do
+    sleep 5
+done

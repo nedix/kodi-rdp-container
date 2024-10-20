@@ -1,5 +1,5 @@
-#!/usr/bin/env execlineb
+#!/usr/bin/env sh
 
-foreground { mkdir -p /var/run/dbus/ }
+mkdir -p /var/run/dbus/
 
-/usr/bin/dbus-daemon --system
+exec /usr/bin/dbus-daemon --system

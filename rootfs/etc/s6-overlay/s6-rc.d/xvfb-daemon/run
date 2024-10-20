@@ -1,6 +1,4 @@
-#!/usr/bin/env execlineb
-
-s6-envdir /run/s6/container_environment
+#!/usr/bin/env sh
 
 exec env -u DISPLAY /usr/bin/Xvfb :0.0 \
     -nocursor \
