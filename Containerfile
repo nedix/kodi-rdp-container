@@ -365,7 +365,6 @@ COPY --from=xrdp /build/xrdp/output/ /
 COPY --from=xorgxrdp /build/xorgxrdp/output/ /
 COPY --from=pulseaudio /build/pulseaudio/output/ /
 COPY --from=pulseaudio-module-xrdp /build/pulseaudio-module-xrdp/output/ /
-COPY --from=mkrundir /build/mkrundir/output/ /
 
 COPY /rootfs/ /
 
