@@ -13,21 +13,22 @@
 : ${__GLX_VENDOR_LIBRARY_NAME}
 : ${__GL_SYNC_TO_VBLANK}
 
-groupadd pulse-access
-
 useradd -m -d /home/kodi -s /bin/sh kodi
-useradd -m -d /var/run/pulse -s /sbin/nologin pulse
-
 chown -R kodi /home/kodi
-chown -R pulse /var/run/pulse
 
-usermod -aG pulse-access kodi
+groupadd pulse-access
+useradd -m -d /var/run/pulse -s /sbin/nologin pulse
 usermod -aG audio pulse
 usermod -aG pulse pulse
+usermod -aG pulse-access kodi
 usermod -aG pulse-access pulse
+chown -R pulse /var/run/pulse
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
 echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
+
+XDG_RUNTIME_DIR="/run/user-$(id -u)"
+mkdir -pm 0700 "$XDG_RUNTIME_DIR"
 
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \
@@ -48,7 +49,7 @@ exec env -i \
     VGL_GLLIB="$VGL_GLLIB" \
     VK_ICD_FILENAMES="$VK_ICD_FILENAMES" \
     VK_LAYER_PATH="$VK_LAYER_PATH" \
-    XDG_RUNTIME_DIR="$(/usr/local/bin/mkrundir)" \
+    XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
     XDG_SESSION_TYPE="x11" \
     __GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     __GL_SYNC_TO_VBLANK="$__GL_SYNC_TO_VBLANK" \

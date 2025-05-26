@@ -1,7 +1,5 @@
 ARG FEDORA_VERSION=42
-ARG HARE_VERSION=0.24.2
 ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
-ARG MKRUNDIR_VERSION=0.4.0
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
@@ -333,38 +331,6 @@ RUN curl -fsSL "https://github.com/neutrinolabs/pulseaudio-module-xrdp/tarball/v
         --prefix=/usr \
         --sysconfdir=/etc \
     && make -j $(( $(nproc) + 1 )) \
-    && make DESTDIR="${PWD}/output" install
-
-FROM build-base AS mkrundir
-
-RUN dnf install -y \
-        harec \
-        scdoc
-
-ARG HARE_VERSION
-
-WORKDIR /build/hare
-
-RUN case "$(uname -m)" in \
-        aarch64|arm*) \
-            CPU_ARCHITECTURE="aarch64" \
-        ;; x86_64) \
-            CPU_ARCHITECTURE="x86_64" \
-        ;; *) echo "Unsupported architecture: $(uname -m)"; exit 1; ;; \
-    esac \
-    && curl -fsSL "https://git.sr.ht/~sircmpwn/hare/archive/${HARE_VERSION}.tar.gz" \
-    | tar -xpzf- --strip-components=1 \
-    && cp configs/linux.mk config.mk \
-    && make ARCH="$CPU_ARCHITECTURE" -j $(( $(nproc) + 1 )) \
-    && make install
-
-WORKDIR /build/mkrundir
-
-ARG MKRUNDIR_VERSION
-
-RUN curl -fsSL "https://git.sr.ht/~whynothugo/mkrundir/archive/v${MKRUNDIR_VERSION}.tar.gz" \
-    | tar -xpzf- --strip-components=1 \
-    && make -j $(( $(nproc) + 1 )) all \
     && make DESTDIR="${PWD}/output" install
 
 FROM base
