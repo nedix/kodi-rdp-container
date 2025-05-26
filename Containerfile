@@ -3,9 +3,9 @@ ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
-ARG XORGXRDP_VERSION=fb49d67b6c94217cb64020986c983abe52ce06f2
+ARG XORGXRDP_VERSION=1bcb8ba639e9020e2bf9b3206b5769076741f16d
 ARG XORG_SERVER_VERSION=21.1.13
-ARG XRDP_VERSION=1c33f3d9af22cac303803a4132a6b1aea5ebf1ce
+ARG XRDP_VERSION=45ccd2d35686c3bc4439a311432095894a69f580
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
 
@@ -300,7 +300,7 @@ WORKDIR /build/pulseaudio
 
 ARG PULSEAUDIO_VERSION
 
-RUN curl -fsSL "https://freedesktop.org/software/pulseaudio/releases/pulseaudio-${PULSEAUDIO_VERSION}.tar.gz" \
+RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/tarball/v${PULSEAUDIO_VERSION}" \
     | tar -xpzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build  \
