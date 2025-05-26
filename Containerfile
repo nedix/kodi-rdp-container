@@ -300,7 +300,7 @@ WORKDIR /build/pulseaudio
 
 ARG PULSEAUDIO_VERSION
 
-RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/archive/refs/tags/v${PULSEAUDIO_VERSION}.tar.gz" \
+RUN curl -fsSL https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/archive/${PULSEAUDIO_VERSION}/pulseaudio-v${PULSEAUDIO_VERSION}.tar.gz \
     | tar -xpzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build  \
