@@ -302,7 +302,8 @@ WORKDIR /build/pulseaudio
 ARG PULSEAUDIO_VERSION
 
 RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/tarball/v${PULSEAUDIO_VERSION}" \
-    | tar -xvzf- --strip-components=1 \
+    | gunzip \
+    | tar -xvf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build  \
         --prefix=/usr \
