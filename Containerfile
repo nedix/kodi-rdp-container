@@ -305,6 +305,7 @@ RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/tarball/v${PULSEAUDIO_V
     | gunzip \
     | tar -xvf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
+    && meson rewrite kwargs set project / version "$PULSEAUDIO_VERSION" \
     && meson setup build  \
         --prefix=/usr \
         -Db_lto=true \
