@@ -99,6 +99,7 @@ RUN dnf install -y \
         gawk \
         gcc \
         git \
+        gzip \
         intltool \
         kernel-headers \
         koji \
@@ -300,8 +301,8 @@ WORKDIR /build/pulseaudio
 
 ARG PULSEAUDIO_VERSION
 
-RUN curl -fsSL "https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/archive/v${PULSEAUDIO_VERSION}/pulseaudio-v${PULSEAUDIO_VERSION}.tar.gz" \
-    | tar -xpzf- --strip-components=1 \
+RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/tarball/v${PULSEAUDIO_VERSION}" \
+    | tar -xvzf- --strip-components=1 \
     && export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && meson setup build  \
         --prefix=/usr \
