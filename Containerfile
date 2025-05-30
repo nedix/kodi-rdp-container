@@ -219,7 +219,7 @@ RUN export CFLAGS="-O2 -g1" CPPFLAGS="-O2 -g1" CXXFLAGS="-O2 -g1" \
     && ./configure \
         --localstatedir=/var \
         --prefix=/usr \
-        --sbindir=/usr/sbin \
+        --sbindir=/usr/bin \
         --sysconfdir=/etc \
         --enable-glamor \
         --enable-ipv6 \
