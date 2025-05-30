@@ -198,6 +198,7 @@ RUN dnf install -y \
 
 RUN dnf install -y x264-devel
 RUN dnf install -y libxkbfile-devel
+RUN dnf install -y clang-analyzer
 RUN dnf install -y which
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
@@ -360,6 +361,11 @@ RUN dnf install -y \
 RUN dnf install -y openssh-server sudo
 RUN dnf install -y kodi kodi-inputstream-adaptive
 RUN dnf install -y gdb strace top ps valgrind
+
+RUN dnf install -y ffmpeg-libs x264-libs x265-libs
+RUN dnf install -y VirtualGL
+RUN dnf install -y egl-utils glx-utils vulkan-tools
+RUN dnf install -y mesa-vulkan-drivers
 
 COPY --from=xorg-server /build/xorg-server/output/ /
 COPY --from=xrdp /build/xrdp/output/ /
