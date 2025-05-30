@@ -3,8 +3,8 @@ ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.0.0
-ARG XORGXRDP_VERSION=fb49d67b6c94217cb64020986c983abe52ce06f2
-ARG XRDP_VERSION=1c33f3d9af22cac303803a4132a6b1aea5ebf1ce
+ARG XORGXRDP_VERSION=2b1f913f4aa6b88d63d9ce9302c61cb0e39483f6
+ARG XRDP_VERSION=32839bb193a27923242f3c6d2ddb0d7ed0f4c3f5
 ARG XORG_SERVER_VERSION=21.1.12
 
 FROM registry.fedoraproject.org/fedora-minimal:${FEDORA_VERSION} AS base
@@ -190,6 +190,7 @@ RUN dnf install -y \
         libepoxy-devel \
         nasm \
         openssl-devel \
+        pam \
         pam-devel \
         pixman-devel \
         turbojpeg-devel \
@@ -197,7 +198,7 @@ RUN dnf install -y \
 
 RUN dnf install -y x264-devel
 RUN dnf install -y libxkbfile-devel
-RUN dnf install -y clang-analyzer
+RUN dnf install -y which
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 
@@ -241,6 +242,8 @@ RUN dnf install -y \
         nasm \
         xorg-x11-server-devel \
         yasm-devel
+
+RUN dnf install -y which
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -357,11 +360,6 @@ RUN dnf install -y \
 RUN dnf install -y openssh-server sudo
 RUN dnf install -y kodi kodi-inputstream-adaptive
 RUN dnf install -y gdb strace top ps valgrind
-
-#RUN dnf install -y ffmpeg-libs x264-libs x265-libs
-#RUN dnf install -y VirtualGL
-#RUN dnf install -y egl-utils glx-utils vulkan-tools
-#RUN dnf install -y mesa-vulkan-drivers
 
 COPY --from=xorg-server /build/xorg-server/output/ /
 COPY --from=xrdp /build/xrdp/output/ /
