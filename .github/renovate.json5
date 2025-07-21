@@ -4,11 +4,12 @@
   ],
   customManagers: [
     {
-      depNameTemplate: "Alpine",
+      depNameTemplate: "Fedora",
       fileMatch: ["^Containerfile$"],
-      matchStrings: ["ARG ALPINE_VERSION=(?<currentValue>.*?)\\n"],
-      datasourceTemplate: "docker",
-      packageNameTemplate: "alpine",
+      matchStrings: ["ARG FEDORA_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "custom.fedora",
+      packageNameTemplate: "fedora",
+      versioningTemplate: "loose",
     },
     {
       depNameTemplate: "s6-overlay",
@@ -18,6 +19,12 @@
       packageNameTemplate: "just-containers/s6-overlay",
     },
   ],
+  customDatasources: {
+    fedora: {
+      defaultRegistryUrlTemplate: "https://fedoraproject.org/releases.json",
+      transformTemplates: ['{ "releases": $map($, function($v) { { "version": $v.version } }) }'],
+    },
+  },
   packageRules: [
     {
       description: "Custom versioning for s6-overlay",
