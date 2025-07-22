@@ -14,7 +14,8 @@ ARG BUILD_DEPENDENCIES=" \
     xz \
 "
 
-RUN dnf install -y $BUILD_DEPENDENCIES
+RUN dnf makecache --refresh \
+    && dnf install -y $BUILD_DEPENDENCIES
 
 ARG S6_OVERLAY_VERSION
 
