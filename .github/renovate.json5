@@ -7,9 +7,8 @@
       depNameTemplate: "Fedora",
       fileMatch: ["^Containerfile$"],
       matchStrings: ["ARG FEDORA_VERSION=(?<currentValue>.*?)\\n"],
-      datasourceTemplate: "custom.fedora",
-      packageNameTemplate: "fedora",
-      versioningTemplate: "loose",
+      datasourceTemplate: "github-tags",
+      packageNameTemplate: "nedix/fedora-base-container",
     },
     {
       depNameTemplate: "s6-overlay",
