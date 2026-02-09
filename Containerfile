@@ -1,10 +1,10 @@
 ARG FEDORA_VERSION=42
 ARG LIBVDPAU_VA_GL_VERSION=769abad3207cb3e99c4ed7d21369e0859b75b548
-ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.7
+ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.8
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.1.0
-ARG XORGXRDP_VERSION=2b1f913f4aa6b88d63d9ce9302c61cb0e39483f6
-ARG XRDP_VERSION=32839bb193a27923242f3c6d2ddb0d7ed0f4c3f5
+ARG XORGXRDP_VERSION=0.10.5
+ARG XRDP_VERSION=0.10.5
 ARG XORG_SERVER_VERSION=21.1.12
 
 FROM ghcr.io/nedix/fedora-base-container:${FEDORA_VERSION} AS base
@@ -153,9 +153,9 @@ WORKDIR /build/xrdp
 ARG XRDP_VERSION
 
 RUN git init "$PWD" \
-    && git remote add origin https://github.com/nedix/xrdp-fork.git \
-    && git fetch origin "$XRDP_VERSION" --no-tags \
-    && git checkout -b main "$XRDP_VERSION" \
+    && git remote add origin https://github.com/neutrinolabs/xrdp.git \
+    && git fetch origin \
+    && git checkout -b main "v${XRDP_VERSION}" \
     && git submodule update --init --recursive --depth=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
@@ -196,7 +196,7 @@ WORKDIR /build/xorgxrdp
 
 ARG XORGXRDP_VERSION
 
-RUN curl -fsSL "https://github.com/nedix/xorgxrdp-fork/tarball/${XORGXRDP_VERSION}" \
+RUN curl -fsSL "https://github.com/neutrinolabs/xorgxrdp/tarball/v${XORGXRDP_VERSION}" \
     | tar -xpzf- --strip-components=1 \
     && sed -E \
         -e "s|#define MIN_MS_BETWEEN_FRAMES 40|#define MIN_MS_BETWEEN_FRAMES 10|" \
