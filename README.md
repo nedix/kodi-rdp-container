@@ -1,10 +1,10 @@
 # [kodi-rdp-container][project]
 
+
 ## Usage
 
-### 1. Start the container
 
-The default username is `kodi`.
+### 1. Start the container
 
 ```shell
 docker run --rm --pull always --name kodi-rdp \
@@ -12,5 +12,10 @@ docker run --rm --pull always --name kodi-rdp \
     -e PASSWORD_HASH="$(printf "Your SuperSecret Password123!!!" | mkpasswd -P0)" \
     nedix/kodi-rdp
 ```
+
+
+### 2. Connect via Remote Desktop Protocol
+
+The default username is `kodi`.
 
 [project]: https://hub.docker.com/r/nedix/kodi-rdp
