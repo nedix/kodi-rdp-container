@@ -27,11 +27,3 @@ shell:
 
 test:
 	@$(CURDIR)/tests/index.sh
-
-profile-xrdp: kcachegrind_port=8080
-profile-xrdp:
-#	@docker build -f Containerfile --progress=plain --target=xrdp -t kodi-xrdp
-#	@docker run --rm -d --entrypoint "/bin/sh" --name kodi-xrdp kodi-xrdp -c "tail -f /dev/null"
-#	@docker export kodi-xrdp | tar -xpf- --strip-components=2 -C ./build/xrdp build/xrdp
-#	@docker rm -fv kodi-xrdp
-	@docker run --rm -p $(kcachegrind_port):8080 -v "${PWD}:/data" -v "${PWD}/build/xrdp:/build/xrdp:ro" --name kcachegrind nedix/kcachegrind

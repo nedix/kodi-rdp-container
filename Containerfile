@@ -137,6 +137,7 @@ RUN dnf install -y \
         libXrandr-devel \
         libdrm-devel \
         libepoxy-devel \
+        libxkbfile-devel \
         nasm \
         openssl-devel \
         pam \
@@ -144,11 +145,6 @@ RUN dnf install -y \
         pixman-devel \
         turbojpeg-devel \
         yasm-devel
-
-RUN dnf install -y x264-devel
-RUN dnf install -y libxkbfile-devel
-RUN dnf install -y clang-analyzer
-RUN dnf install -y which
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 
@@ -192,8 +188,6 @@ RUN dnf install -y \
         nasm \
         xorg-x11-server-devel \
         yasm-devel
-
-RUN dnf install -y which
 
 COPY --link --from=xorg-server /build/xorg-server/output/ /
 COPY --link --from=xrdp /build/xrdp/output/ /
@@ -307,14 +301,9 @@ RUN dnf install -y \
         xset \
         xxd
 
-RUN dnf install -y openssh-server sudo
 RUN dnf install -y kodi kodi-inputstream-adaptive
-RUN dnf install -y gdb strace top ps valgrind
-
 RUN dnf install -y ffmpeg-libs x264-libs x265-libs
-RUN dnf install -y VirtualGL
-RUN dnf install -y egl-utils glx-utils vulkan-tools
-RUN dnf install -y mesa-vulkan-drivers
+RUN dnf install -y mkpasswd sudo
 
 COPY --from=xorg-server /build/xorg-server/output/ /
 COPY --from=xrdp /build/xrdp/output/ /
@@ -330,9 +319,6 @@ RUN dnf clean all \
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility,video,display
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-# SSH
-EXPOSE 22
 
 # RDP
 EXPOSE 3389

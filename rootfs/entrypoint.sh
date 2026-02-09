@@ -25,7 +25,6 @@ usermod -aG pulse-access pulse
 chown -R pulse /var/run/pulse
 
 echo "kodi:${PASSWORD_HASH}" | chpasswd -e
-echo "kodi ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
 XDG_RUNTIME_DIR="/run/user-$(id -u)"
 mkdir -pm 0700 "$XDG_RUNTIME_DIR"

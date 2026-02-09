@@ -26,7 +26,6 @@ Options:
 
 | Option key | Default value |
 |------------|---------------|
-| SSH_PORT   | 22            |
 | RDP_PORT   | 3389          |
 
 
