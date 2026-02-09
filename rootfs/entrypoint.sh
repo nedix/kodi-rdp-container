@@ -18,21 +18,18 @@
 : ${__GLX_VENDOR_LIBRARY_NAME}
 : ${__GL_SYNC_TO_VBLANK}
 
-useradd -m -d /home/kodi -s /bin/sh kodi
-chown -R kodi /home/kodi
+useradd -M -d "/home/${USERNAME}" -s /bin/sh "$USERNAME"
+chown -R "$USERNAME" "/home/${USERNAME}"
+printf '%s:%s' "$USERNAME" "$PASSWORD_HASH" | chpasswd -e
 
-groupadd pulse-access
 useradd -m -d /var/run/pulse -s /sbin/nologin pulse
+chown -R pulse /var/run/pulse
 usermod -aG audio pulse
 usermod -aG pulse pulse
-usermod -aG pulse-access kodi
+
+groupadd pulse-access
+usermod -aG pulse-access "$USERNAME"
 usermod -aG pulse-access pulse
-chown -R pulse /var/run/pulse
-
-echo "kodi:${PASSWORD_HASH}" | chpasswd -e
-
-XDG_RUNTIME_DIR="/run/user-$(id -u)"
-mkdir -pm 0700 "$XDG_RUNTIME_DIR"
 
 exec env -i \
     EGL_PLATFORM="$EGL_PLATFORM" \

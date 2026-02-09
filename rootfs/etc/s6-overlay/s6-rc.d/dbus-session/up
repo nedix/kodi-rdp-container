@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
 eval "export $(/usr/bin/dbus-launch)"
+
 printf "$DBUS_SESSION_BUS_ADDRESS" > /run/s6/container_environment/DBUS_SESSION_BUS_ADDRESS
 printf "$DBUS_SESSION_BUS_PID"     > /run/s6/container_environment/DBUS_SESSION_BUS_PID

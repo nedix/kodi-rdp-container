@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
-export HOME=/root
+export HOME="/home/${USERNAME}"
 
 touch ~/.Xauthority
+chown "$USERNAME" ~/.Xauthority
 
 /usr/bin/xauth add :0.0 . $(xxd -l 16 -p /dev/urandom)

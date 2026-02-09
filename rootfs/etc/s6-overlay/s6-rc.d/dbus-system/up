@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
-mkdir -p /var/run/dbus/
+mkdir -p /run/dbus/
 
 exec /usr/bin/dbus-daemon --system

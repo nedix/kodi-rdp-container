@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+XDG_RUNTIME_DIR="/run/user-$(id -u ${USERNAME})"
+mkdir -pm 0700 "$XDG_RUNTIME_DIR"
+chown -R "$(id -u ${USERNAME})" "$XDG_RUNTIME_DIR"
+
+printf "$XDG_RUNTIME_DIR" > /run/s6/container_environment/XDG_RUNTIME_DIR
