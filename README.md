@@ -1,5 +1,7 @@
 # [kodi-rdp-container][project]
 
+Cross-platform Kodi container with screensharing via RDP ([xrdp][xrdp]).
+
 
 ## Usage
 
@@ -19,3 +21,4 @@ docker run --rm --pull always --name kodi-rdp \
 The default username is `kodi`.
 
 [project]: https://hub.docker.com/r/nedix/kodi-rdp
+[xrdp]: https://github.com/neutrinolabs/xrdp
