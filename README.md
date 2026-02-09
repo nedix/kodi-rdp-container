@@ -1,11 +1,16 @@
 # [kodi-rdp-container][project]
 
+## Usage
+
+### 1. Start the container
+
+The default username is `kodi`.
+
 ```shell
-make setup
-make up
-make shell
-PASSWORD_HASH="$(printf "Your SuperSecret Password123!!!" | mkpasswd -P0)"
-sed '/^PASSWORD_HASH=$/d' -i .env && printf 'PASSWORD_HASH=%s\n' "$PASSWORD_HASH" >> .env
+docker run --rm --pull always --name kodi-rdp \
+    -p 127.0.0.1:3389:3389 \
+    -e PASSWORD_HASH="$(printf "Your SuperSecret Password123!!!" | mkpasswd -P0)" \
+    nedix/kodi-rdp
 ```
 
 [project]: https://hub.docker.com/r/nedix/kodi-rdp

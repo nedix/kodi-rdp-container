@@ -24,10 +24,10 @@ Command: `make up`
 
 Options:
 
-| Option   | Default |
-|----------|---------|
-| RDP_PORT | 3389    |
-| USERNAME | kodi    |
+| Option   | Required | Default |
+|----------|----------|---------|
+| RDP_PORT | yes      | 3389    |
+| USERNAME | yes      | kodi    |
 
 
 ### Down
