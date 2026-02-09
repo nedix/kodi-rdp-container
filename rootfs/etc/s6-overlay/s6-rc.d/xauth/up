@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+: ${USERNAME}
+
 export HOME="/home/${USERNAME}"
 
 touch ~/.Xauthority

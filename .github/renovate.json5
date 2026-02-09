@@ -18,12 +18,6 @@
       packageNameTemplate: "just-containers/s6-overlay",
     },
   ],
-  customDatasources: {
-    fedora: {
-      defaultRegistryUrlTemplate: "https://fedoraproject.org/releases.json",
-      transformTemplates: ['{ "releases": $map($, function($v) { { "version": $v.version } }) }'],
-    },
-  },
   packageRules: [
     {
       description: "Custom versioning for s6-overlay",
