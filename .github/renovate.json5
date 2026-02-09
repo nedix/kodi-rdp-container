@@ -11,19 +11,84 @@
       packageNameTemplate: "nedix/fedora-base-container",
     },
     {
+      depNameTemplate: "pulseaudio",
+      fileMatch: ["^Containerfile$"],
+      matchStrings: ["ARG PULSEAUDIO_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "github-tags",
+      packageNameTemplate: "pulseaudio/pulseaudio",
+    },
+    {
+      depNameTemplate: "pulseaudio-module-xrdp",
+      fileMatch: ["^Containerfile$"],
+      matchStrings: ["ARG PULSEAUDIO_MODULE_XRDP_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "github-releases",
+      packageNameTemplate: "neutrinolabs/pulseaudio-module-xrdp",
+    },
+    {
       depNameTemplate: "s6-overlay",
       fileMatch: ["^Containerfile$"],
       matchStrings: ["ARG S6_OVERLAY_VERSION=(?<currentValue>.*?)\\n"],
       datasourceTemplate: "github-tags",
       packageNameTemplate: "just-containers/s6-overlay",
     },
+    {
+      depNameTemplate: "xorgxrdp",
+      fileMatch: ["^Containerfile$"],
+      matchStrings: ["ARG XORGXRDP_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "github-tags",
+      packageNameTemplate: "neutrinolabs/xorgxrdp",
+    },
+    {
+      depNameTemplate: "xrdp",
+      fileMatch: ["^Containerfile$"],
+      matchStrings: ["ARG XRDP_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "github-tags",
+      packageNameTemplate: "neutrinolabs/xrdp",
+    },
+    {
+      depNameTemplate: "Xorg",
+      fileMatch: ["^Containerfile$"],
+      matchStrings: ["ARG XORG_SERVER_VERSION=(?<currentValue>.*?)\\n"],
+      datasourceTemplate: "git-tags",
+      packageNameTemplate: "https://gitlab.freedesktop.org/xorg/xserver.git",
+    },
   ],
   packageRules: [
+    {
+      description: "Custom versioning for Fedora",
+      matchPackageNames: ["nedix/fedora-base-container"],
+      versioning: "regex:^(?<major>\\d+)$"
+    },
+    {
+      description: "Custom versioning for pulseaudio",
+      matchPackageNames: ["pulseaudio/pulseaudio"],
+      extractVersion: "^v(?<version>.*)$",
+    },
+    {
+      description: "Custom versioning for pulseaudio-module-xrdp",
+      matchPackageNames: ["neutrinolabs/pulseaudio-module-xrdp"],
+      extractVersion: "^v(?<version>.*)$",
+    },
     {
       description: "Custom versioning for s6-overlay",
       matchPackageNames: ["just-containers/s6-overlay"],
       extractVersion: "^v(?<version>.*)$",
       versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$",
     },
+    {
+      description: "Custom versioning for xorgxrdp",
+      matchPackageNames: ["neutrinolabs/xorgxrdp"],
+      extractVersion: "^v(?<version>.*)$",
+    },
+    {
+      description: "Custom versioning for xrdp",
+      matchPackageNames: ["neutrinolabs/xrdp"],
+      extractVersion: "^v(?<version>.*)$",
+    },
+    {
+      description: "Custom versioning for Xorg",
+      matchPackageNames: ["https://gitlab.freedesktop.org/xorg/xserver.git"],
+      extractVersion: "^xorg-server-(?<version>.*)$",
+    }
   ],
 }
