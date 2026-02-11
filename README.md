@@ -11,7 +11,7 @@ Cross-platform Kodi container with display output via RDP ([xrdp][xrdp]).
 ```shell
 docker run --rm --pull always --name kodi-rdp \
     -p 127.0.0.1:3389:3389 \
-    -e PASSWORD_HASH="$(printf "Your SuperSecret Password123!!!" | mkpasswd -P0)" \
+    -e PASSWORD_HASH=$(printf "Your SuperSecret Password123!!!" | mkpasswd -P0) \
     nedix/kodi-rdp
 ```
 

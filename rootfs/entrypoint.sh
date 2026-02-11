@@ -20,7 +20,7 @@
 
 useradd -M -d "/home/${USERNAME}" -s /bin/sh "$USERNAME"
 chown -R "$USERNAME" "/home/${USERNAME}"
-printf '%s:%s' "$USERNAME" "$PASSWORD_HASH" | chpasswd -e
+printf "%s:%s" "$USERNAME" "$PASSWORD_HASH" | chpasswd -e
 
 useradd -m -d /var/run/pulse -s /sbin/nologin pulse
 chown -R pulse /var/run/pulse
