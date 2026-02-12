@@ -16,7 +16,6 @@ Execute this command to generate your password hash:
 ```shell
 docker run \
     --entrypoint /bin/sh \
-    --name kodi-rdp \
     --pull always \
     --rm \
     nedix/kodi-rdp \
