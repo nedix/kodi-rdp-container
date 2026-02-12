@@ -1,6 +1,6 @@
 # [kodi-rdp-container][project]
 
-Cross-platform Kodi container with display output via RDP ([xrdp][xrdp]).
+Kodi container with display output via RDP ([xrdp][xrdp]).
 
 
 ## Usage
