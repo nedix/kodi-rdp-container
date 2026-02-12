@@ -4,7 +4,7 @@
 
 ### Setup
 
-Build the container.
+Build the container and create the `.env` file.
 
 Command: `make setup`
 
@@ -24,9 +24,10 @@ Command: `make up`
 
 Options:
 
-| Option   | Default |
-|----------|---------|
-| RDP_PORT | 3389    |
+| Option           | Default |
+|------------------|---------|
+| FORWARD_RDP_PORT | 3389    |
+| USERNAME         | kodi    |
 
 
 ### Down
