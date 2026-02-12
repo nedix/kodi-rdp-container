@@ -26,7 +26,7 @@ docker run \
 
 ### Make variables
 
-Please read the Makefile document ([link](/docs/make.md)).
+Please read the Makefile [documentation](/docs/make.md).
 
 
 ## Usage
