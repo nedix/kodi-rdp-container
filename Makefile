@@ -6,14 +6,15 @@ destroy:
 	-@docker rm -fv kodi
 
 up: RDP_PORT := "3389"
-up: USERNAME := $(shell grep "^USERNAME=" .env | cut -d= -f2-)
 up:
-	@docker run --rm -d --name kodi \
+	@docker run \
 		--env-file .env \
-		-e USERNAME="$(USERNAME)" \
+		--name kodi \
+		--rm \
         -p 127.0.0.1:$(RDP_PORT):3389 \
         -v "./storage/kodi:/home/$(USERNAME)/.kodi" \
         -v ./storage/xrdp/certs:/var/xrdp/certs \
+		-d \
         kodi
 	@docker logs -f kodi
 
