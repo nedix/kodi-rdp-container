@@ -18,8 +18,9 @@
 : ${__GLX_VENDOR_LIBRARY_NAME}
 : ${__GL_SYNC_TO_VBLANK}
 
-useradd -M -d "/home/${USERNAME}" -s /bin/sh "$USERNAME"
-chown -R "$USERNAME" "/home/${USERNAME}"
+mkdir -p "/var/kodi-rdp/"
+useradd -M -d "/var/kodi-rdp/" -s /bin/sh "$USERNAME"
+chown -R "$USERNAME" "/var/kodi-rdp/"
 printf "%s:%s" "$USERNAME" "$PASSWORD_HASH" | chpasswd -e
 
 useradd -m -d /var/run/pulse -s /sbin/nologin pulse

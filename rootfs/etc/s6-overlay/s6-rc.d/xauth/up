@@ -2,7 +2,7 @@
 
 : ${USERNAME}
 
-export HOME="/home/${USERNAME}"
+export HOME="/var/kodi-rdp/"
 
 touch ~/.Xauthority
 chown "$USERNAME" ~/.Xauthority

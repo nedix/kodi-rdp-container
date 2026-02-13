@@ -47,12 +47,14 @@ Please read the Makefile [documentation](/docs/make.md).
 ### 1. Start the container
 
 ```shell
-docker run \
+mkdir -p ./storage/kodi/ \
+&& docker run \
     --env-file .env \
     --name kodi-rdp \
     --pull always \
     --rm \
     -p 127.0.0.1:3389:3389 \
+    -v ./storage/kodi/:/var/kodi-rdp/.kodi/ \
     nedix/kodi-rdp
 ```
 

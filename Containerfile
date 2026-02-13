@@ -321,3 +321,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # RDP
 EXPOSE 3389
+
+VOLUME /var/kodi-rdp/.kodi/
+VOLUME /var/xrdp/certs/
