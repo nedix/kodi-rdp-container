@@ -3,10 +3,23 @@
 Kodi container with display output via RDP ([xrdp][xrdp]).
 
 
+## Table of contents
+
+- [Configuration](#configuration)
+    - [Environment variables](#environment-variables)
+    - [Make variables](#make-variables)
+- [Usage](#usage)
+    - [1. Start the container](#1-start-the-container)
+    - [2. Connect via Remote Desktop Protocol](#2-connect-via-remote-desktop-protocol)
+
+
 ## Configuration
 
 
 ### Environment variables
+
+You can configure the container by making use of the following environment variables.
+Add them to the `.env` file and use `--env-file=.env` or use the `-e` flag with the `docker run` command.
 
 
 #### PASSWORD_HASH
@@ -19,7 +32,7 @@ docker run \
     --pull always \
     --rm \
     nedix/kodi-rdp \
-    -c 'echo "Your SuperSecret Password123!!!" | mkpasswd -P0'
+    -c 'echo "Your Super Secret Password123!!!" | mkpasswd -P0'
 ```
 
 
@@ -35,10 +48,10 @@ Please read the Makefile [documentation](/docs/make.md).
 
 ```shell
 docker run \
+    --env-file .env \
     --name kodi-rdp \
     --pull always \
     --rm \
-    -e PASSWORD_HASH="^&*()_+" \
     -p 127.0.0.1:3389:3389 \
     nedix/kodi-rdp
 ```
