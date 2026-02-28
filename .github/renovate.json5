@@ -7,8 +7,9 @@
       depNameTemplate: "Fedora",
       fileMatch: ["^Containerfile$"],
       matchStrings: ["ARG FEDORA_VERSION=(?<currentValue>.*?)\\n"],
-      datasourceTemplate: "github-tags",
+      datasourceTemplate: "docker",
       packageNameTemplate: "nedix/fedora-base-container",
+      registryUrlTemplate: "https://ghcr.io"
     },
     {
       depNameTemplate: "pulseaudio",
