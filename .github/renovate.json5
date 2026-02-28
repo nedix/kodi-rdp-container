@@ -9,7 +9,7 @@
       matchStrings: ["ARG FEDORA_VERSION=(?<currentValue>.*?)\\n"],
       datasourceTemplate: "docker",
       packageNameTemplate: "nedix/fedora-base-container",
-      registryUrlTemplate: "https://ghcr.io"
+      registryUrlTemplate: "https://ghcr.io",
     },
     {
       depNameTemplate: "pulseaudio",
