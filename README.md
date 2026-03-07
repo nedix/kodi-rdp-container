@@ -47,21 +47,18 @@ Please read the Makefile [documentation](/docs/make.md).
 ### 1. Start the container
 
 ```shell
-mkdir -p ./storage/kodi/ \
-&& docker run \
-    --env-file .env \
+docker run \
     --name kodi-rdp \
     --pull always \
-    --rm \
+    --restart unless-stopped \
+    -e PASSWORD_HASH="foo" \
+    -e USERNAME="bar" \
     -p 127.0.0.1:3389:3389 \
-    -v ./storage/kodi/:/var/kodi-rdp/.kodi/ \
     nedix/kodi-rdp
 ```
 
 
 ### 2. Connect via Remote Desktop Protocol
-
-The default username is `kodi`.
 
 [project]: https://hub.docker.com/r/nedix/kodi-rdp
 [xrdp]: https://github.com/neutrinolabs/xrdp
