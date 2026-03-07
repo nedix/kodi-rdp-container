@@ -26,7 +26,7 @@ Options:
 
 | Option           | Default |
 |------------------|---------|
-| FORWARD_RDP_PORT | 3389    |
+| RDP_PORT | 3389    |
 | USERNAME         | kodi    |
 
 
