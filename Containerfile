@@ -1,4 +1,4 @@
-ARG FEDORA_VERSION=43
+ARG FEDORA_VERSION=44
 ARG PULSEAUDIO_MODULE_XRDP_VERSION=0.8
 ARG PULSEAUDIO_VERSION=17.0
 ARG S6_OVERLAY_VERSION=3.2.3.0
@@ -301,7 +301,7 @@ RUN dnf install -y \
         xxd
 
 RUN dnf install -y kodi kodi-inputstream-adaptive
-RUN dnf install -y ffmpeg-libs x264-libs x265-libs
+RUN dnf install -y x264-libs x265-libs
 RUN dnf install -y mkpasswd sudo
 
 COPY --from=xorg-server /build/xorg-server/output/ /
