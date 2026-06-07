@@ -38,7 +38,7 @@ docker run \
 
 ### Make variables
 
-Please read the Makefile [documentation](/docs/make.md).
+Please read the [documentation](/docs/make.md) for the Makefile.
 
 
 ## Usage
@@ -51,6 +51,7 @@ docker run \
     --name kodi-rdp \
     --pull always \
     --restart unless-stopped \
+    --rm \
     -e PASSWORD_HASH="foo" \
     -e USERNAME="bar" \
     -p 127.0.0.1:3389:3389 \
