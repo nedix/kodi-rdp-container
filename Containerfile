@@ -13,12 +13,11 @@ ARG BUILD_DEPENDENCIES=" \
     xz \
 "
 
-RUN dnf makecache --refresh \
-    && dnf install -y $BUILD_DEPENDENCIES
-
 ARG S6_OVERLAY_VERSION
 
-RUN case "$(uname -m)" in \
+RUN dnf makecache --refresh \
+    && dnf install -y $BUILD_DEPENDENCIES \
+    && case "$(uname -m)" in \
         aarch64) \
             S6_OVERLAY_ARCHITECTURE="aarch64" \
         ;; arm*) \
@@ -30,9 +29,8 @@ RUN case "$(uname -m)" in \
     && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
     | tar -xpJf- -C / \
     && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCHITECTURE}.tar.xz" \
-    | tar -xpJf- -C /
-
-RUN dnf remove -y $BUILD_DEPENDENCIES
+    | tar -xpJf- -C / \
+    && dnf remove -y $BUILD_DEPENDENCIES
 
 FROM base AS build-base
 

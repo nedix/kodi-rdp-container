@@ -11,10 +11,10 @@ up:
 		--env-file .env \
 		--name kodi-rdp \
 		--rm \
+		-d \
         -p 127.0.0.1:$(RDP_PORT):3389 \
         -v ./storage/kodi/:/var/kodi-rdp/.kodi/ \
         -v ./storage/xrdp/certs/:/var/xrdp/certs/ \
-		-d \
         kodi-rdp
 	@docker logs -f kodi-rdp
 
