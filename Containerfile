@@ -50,7 +50,6 @@ RUN dnf install -y \
         kernel-headers \
         koji \
         libtool \
-        libtool-ltdl-devel \
         m4 \
         make \
         meson \
@@ -220,8 +219,8 @@ FROM build-base AS pulseaudio
 
 RUN dnf install -y \
         avahi-devel \
-        dbus-devel \
         check-devel \
+        dbus-devel \
         glib2-devel \
         libICE-devel \
         libSM-devel \
@@ -235,6 +234,7 @@ RUN dnf install -y \
         libcap-devel \
         libsndfile-devel \
         libtdb-devel \
+        libtool-ltdl-devel \
         openssl-devel \
         orc-devel \
         sbc-devel \
@@ -257,6 +257,9 @@ RUN curl -fsSL "https://github.com/pulseaudio/pulseaudio/tarball/v${PULSEAUDIO_V
     && DESTDIR="${PWD}/output" ninja -C build install
 
 FROM build-base AS pulseaudio-module-xrdp
+
+RUN dnf install -y \
+        libtool-ltdl-devel
 
 COPY --link --from=pulseaudio /build/pulseaudio/ /build/pulseaudio/
 COPY --link --from=pulseaudio /build/pulseaudio/output/ /
